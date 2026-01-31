@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lazra Labs — Dealer Dash | Real-time dealership performance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0d0220;
+      --bg-mid: #1c0b3f;
+      --accent: #f5c96a;
+      --text-muted: #c8bdf0;
+      --text-headline: #ffffff;
+      --glass: rgba(28, 11, 63, 0.6);
+      --glass-border: rgba(197, 181, 240, 0.08);
+      --calendly: https://calendly.com/lazralabs/30min;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-deep);
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(28, 11, 63, 0.8), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(92, 60, 140, 0.15), transparent),
+        radial-gradient(ellipse 60% 40% at 0% 20%, rgba(92, 60, 140, 0.1), transparent);
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Nav */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1.25rem 1.5rem;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--glass-border);
+      transition: background 0.2s;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.125rem;
+      letter-spacing: -0.02em;
+      color: var(--text-headline);
+      text-decoration: none;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.625rem 1.25rem;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s, transform 0.15s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-deep);
+    }
+
+    .btn-primary:hover {
+      background: #f7d078;
+      transform: translateY(-1px);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 10rem 1.5rem 6rem;
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--text-headline);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero .subhead {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+
+    .hero .cta {
+      margin-top: 0.5rem;
+    }
+
+    /* Credibility strip */
+    .credibility {
+      padding: 2rem 1.5rem 4rem;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .credibility-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem 3rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      opacity: 0.9;
+    }
+
+    .credibility span {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .credibility span::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    /* How It Works */
+    .section {
+      padding: 5rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-headline);
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .how-cols {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .how-card {
+      padding: 2rem;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .how-card:hover {
+      border-color: rgba(245, 201, 106, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .how-card h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-headline);
+      margin-bottom: 0.75rem;
+    }
+
+    .how-card p {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .how-card .price {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* How Smart Dealers Buy AI */
+    .framework {
+      padding: 5rem 1.5rem;
+      background: linear-gradient(180deg, transparent 0%, rgba(28, 11, 63, 0.3) 50%, transparent 100%);
+    }
+
+    .framework-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .framework-intro {
+      margin-bottom: 3.5rem;
+    }
+
+    .framework-intro h2 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-headline);
+      margin-bottom: 1rem;
+    }
+
+    .framework-intro p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .step {
+      padding: 1.75rem 0;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .step:last-child {
+      border-bottom: none;
+    }
+
+    .step-num {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .step h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-headline);
+      margin-bottom: 0.75rem;
+    }
+
+    .step p {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .step .lazra {
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      opacity: 0.85;
+    }
+
+    .step .lazra strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* What's Next */
+    .teaser {
+      padding: 4rem 1.5rem;
+      text-align: center;
+    }
+
+    .teaser p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      opacity: 0.8;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 2.5rem 1.5rem;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .footer-brand {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--text-headline);
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .nav {
+        padding: 1rem 1rem;
+      }
+
+      .hero {
+        padding: 8rem 1rem 4rem;
+      }
+
+      .how-cols {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
+
+      .how-card {
+        padding: 1.5rem;
+      }
+
+      .credibility-inner {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .framework {
+        padding: 3rem 1rem;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 1.75rem;
+      }
+
+      .section {
+        padding: 3rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="logo">Lazra Labs</a>
+      <a href="https://calendly.com/lazralabs/30min" class="btn btn-primary" target="_blank" rel="noopener">Request Early Access</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1>Real-time dealership performance. Built by a GM, for GMs.</h1>
+    <p class="subhead">Dealer Dash gives your managers and ownership a single dashboard to track goals, measure performance, and scale across stores — in real time.</p>
+    <a href="https://calendly.com/lazralabs/30min" class="btn btn-primary cta" target="_blank" rel="noopener">Request Early Access</a>
+  </header>
+
+  <section class="credibility">
+    <div class="credibility-inner">
+      <span>Currently in beta at a live dealership</span>
+      <span>Multi-store rollout underway</span>
+      <span>Live April 2026</span>
+    </div>
+  </section>
+
+  <section class="section" id="how-it-works">
+    <h2 class="section-title">How It Works</h2>
+    <div class="how-cols">
+      <div class="how-card">
+        <h3>Set Goals</h3>
+        <p>Managers define monthly targets tied directly to your DMS data.</p>
+      </div>
+      <div class="how-card">
+        <h3>Track Performance</h3>
+        <p>Real-time dashboards surface gaps before they become problems.</p>
+      </div>
+      <div class="how-card">
+        <h3>Scale Across Stores</h3>
+        <p>One platform, multiple dealerships.</p>
+        <p class="price">$149/mo per store.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="framework" id="how-smart-dealers-buy-ai">
+    <div class="framework-inner">
+      <div class="framework-intro">
+        <h2>How Smart Dealers Buy AI</h2>
+        <p><strong>Dealers aren't buying AI. They're buying outcomes.</strong> The question every serious rooftop is asking: Where am I losing money, and can AI fix it without blowing up my people or my process?</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">Step 01</div>
+          <h3>Start with a real problem</h3>
+          <p>Map pressure points: slow speed-to-lead, missed chats, dead CRM data, tied-up service lines.</p>
+          <p class="lazra"><strong>Lazra's job:</strong> turn pain points into measurable KPIs.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">Step 02</div>
+          <h3>Get data-ready by design</h3>
+          <p>AI fails on dirty data. Day-1 data cleanliness audit, flag duplicates, align lead sources.</p>
+          <p class="lazra"><strong>Lazra's job:</strong> build AI that respects the reality of your CRM.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">Step 03</div>
+          <h3>Pick a partner, not just a platform</h3>
+          <p>No 3-year contracts with giant vendors. Weekly iteration, flows tuned to your store, direct access to people who've run dealerships.</p>
+          <p class="lazra"><strong>Lazra's job:</strong> move as fast as your market does.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">Step 04</div>
+          <h3>Pilot first, then scale</h3>
+          <p>30-day pilot, clear KPIs, opt-out guarantee, side-by-side testing.</p>
+          <p class="lazra"><strong>Lazra's job:</strong> earn the rollout by winning the pilot.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">Step 05</div>
+          <h3>Train the team</h3>
+          <p>Employees resist chaos, not AI. Lightweight launch training, simple playbooks, an AI champion role for your internal point person.</p>
+          <p class="lazra"><strong>Lazra's job:</strong> make this feel like adding a high-performing team member.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="teaser">
+    <p>AI-powered knowledge management for dealership teams. Coming soon.</p>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-brand">Lazra Labs © 2026</span>
+      <div class="footer-links">
+        <a href="mailto:christopher@lazralabs.ai">christopher@lazralabs.ai</a>
+        <a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener">Calendly</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
