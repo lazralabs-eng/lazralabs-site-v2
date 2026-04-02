@@ -182,7 +182,7 @@
         max-width: 78%;
         padding: 8px 11px;
         border-radius: 16px;
-        font-size: 13px;
+        font-size: 15px;
         line-height: 1.4;
         white-space: pre-wrap;
         word-wrap: break-word;
