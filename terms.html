@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lazra Labs — Terms &amp; Conditions</title>
+    <link rel="canonical" href="https://lazralabs.ai/terms" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --navy: #0d1828;
+        --navy-mid: #1b2a4a;
+        --navy-light: #243557;
+        --gold: #c5a258;
+        --gold-light: #d4b86a;
+        --gold-border: rgba(197, 162, 88, 0.25);
+        --white: #f4f1ec;
+        --muted: rgba(244, 241, 236, 0.5);
+        --subtle: rgba(244, 241, 236, 0.1);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--navy);
+        color: var(--white);
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 15px;
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+      }
+      nav {
+        position: sticky;
+        top: 0;
+        padding: 16px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(13, 24, 40, 0.9);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--subtle);
+        z-index: 100;
+      }
+      nav a.logo img {
+        height: 32px;
+        width: auto;
+        display: block;
+      }
+      nav a.back {
+        font-size: 13px;
+        color: var(--muted);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: color 0.2s;
+      }
+      nav a.back:hover {
+        color: var(--white);
+      }
+      .container {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 60px 24px 100px;
+      }
+      .page-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--gold);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .page-label::before {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 1px;
+        background: var(--gold);
+      }
+      h1 {
+        font-size: clamp(28px, 4vw, 42px);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        line-height: 1.1;
+        margin-bottom: 10px;
+      }
+      .subhead {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 48px;
+      }
+      .intro-card {
+        background: var(--navy-mid);
+        border: 1px solid var(--gold-border);
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 40px;
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+      .intro-card strong {
+        color: var(--white);
+      }
+      h2 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--white);
+        margin-top: 40px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--subtle);
+      }
+      p {
+        margin-top: 10px;
+        color: var(--muted);
+      }
+      ul {
+        padding-left: 20px;
+        margin-top: 8px;
+      }
+      ul li {
+        margin-bottom: 6px;
+        color: var(--muted);
+      }
+      strong {
+        color: var(--white);
+        font-weight: 600;
+      }
+      a {
+        color: var(--gold);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      a:hover {
+        color: var(--gold-light);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+        font-size: 13px;
+      }
+      th {
+        text-align: left;
+        padding: 10px 14px;
+        background: var(--navy-light);
+        border: 1px solid var(--subtle);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      td {
+        padding: 10px 14px;
+        border: 1px solid var(--subtle);
+        color: var(--muted);
+        vertical-align: top;
+      }
+      tr:nth-child(even) td {
+        background: rgba(244, 241, 236, 0.02);
+      }
+      .callout {
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin-top: 14px;
+        font-size: 13px;
+      }
+      .callout.green {
+        background: rgba(94, 204, 132, 0.08);
+        border-left: 3px solid #5ecc84;
+      }
+      .callout.gold {
+        background: rgba(197, 162, 88, 0.08);
+        border-left: 3px solid var(--gold);
+      }
+      .callout.blue {
+        background: rgba(99, 179, 237, 0.08);
+        border-left: 3px solid #63b3ed;
+      }
+      footer {
+        border-top: 1px solid var(--subtle);
+        padding: 28px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      footer img {
+        height: 24px;
+        opacity: 0.75;
+      }
+      .footer-links {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .footer-links a {
+        font-size: 12px;
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .footer-links a:hover {
+        color: var(--white);
+      }
+      .footer-copy {
+        font-size: 12px;
+        color: rgba(244, 241, 236, 0.25);
+      }
+      @media (max-width: 600px) {
+        nav {
+          padding: 14px 20px;
+        }
+        .container {
+          padding: 40px 20px 80px;
+        }
+        footer {
+          padding: 24px 20px;
+          flex-direction: column;
+          text-align: center;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="/" class="logo"
+        ><img
+          src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Assets/Logo/TRANPARENT.png"
+          alt="Lazra Labs"
+      /></a>
+      <a href="/" class="back">&#8592; Back to site</a>
+    </nav>
+    <div class="container">
+      <div class="page-label">Legal</div>
+      <h1>Terms &amp; Conditions</h1>
+      <div class="subhead">
+        Effective: April 21, 2026 &bull; Last Updated: April 21, 2026
+      </div>
+
+      <div class="intro-card">
+        These Terms &amp; Conditions ("Terms") govern your access to and use of
+        all software products, AI agents, dashboards, and services ("Services")
+        provided by <strong>Lazra Labs LLC</strong> ("Lazra Labs," "we," "us,"
+        or "our"). By accessing or using our Services, you agree to be bound by
+        these Terms in full.
+      </div>
+
+      <h2>1. Acceptance of Terms</h2>
+      <p>
+        By creating an account, requesting a demo, signing an Order Form, or
+        otherwise accessing the Services, you represent that: (a) you are
+        authorized to enter into a binding agreement on behalf of yourself or
+        your organization; (b) your organization has the authority to accept
+        these Terms; and (c) you agree to these Terms in full.
+      </p>
+
+      <h2>2. Description of Services</h2>
+      <p>
+        Lazra Labs provides AI-powered SaaS products for automotive dealerships,
+        including but not limited to:
+      </p>
+      <ul>
+        <li>
+          <strong>DealerDash</strong> — real-time KPI dashboards for dealership
+          performance
+        </li>
+        <li>
+          <strong>IntelBot</strong> — daily automotive market intelligence and
+          Q&amp;A
+        </li>
+        <li>
+          <strong>Ledger</strong> — AI-powered financial analytics, forecasting,
+          and pro forma modeling
+        </li>
+        <li>
+          <strong>AI Agent Roster</strong> — purpose-built agents for sales,
+          service, appraisal, webchat, and competitive intelligence
+        </li>
+      </ul>
+      <p>
+        Product availability, features, and pricing are subject to change with
+        reasonable prior notice as described in Section 4.
+      </p>
+
+      <h2>3. Account Registration and Security</h2>
+      <p>
+        You must provide accurate and complete information when creating an
+        account. You are responsible for maintaining the confidentiality of your
+        credentials and for all activity that occurs under your account. You
+        agree to notify us immediately of any unauthorized access. Lazra Labs is
+        not liable for losses resulting from unauthorized use of your account
+        credentials.
+      </p>
+
+      <h2>4. Subscriptions, Billing &amp; Auto-Renewal</h2>
+      <ul>
+        <li>
+          Services are provided on a subscription basis, billed monthly (or
+          annually if agreed in an Order Form)
+        </li>
+        <li>
+          <strong>Auto-renewal:</strong> Subscriptions automatically renew at
+          the end of each billing period unless cancelled at least 5 business
+          days before the renewal date
+        </li>
+        <li>
+          Fees are due in advance and are <strong>non-refundable</strong> except
+          as expressly stated herein or required by applicable law
+        </li>
+        <li>
+          Lazra Labs reserves the right to change pricing with
+          <strong>30 days&rsquo; prior written notice</strong>. Continued use
+          after the effective date constitutes acceptance of the new pricing
+        </li>
+        <li>
+          Unpaid balances are subject to a late fee of 1.5% per month. Accounts
+          more than 30 days past due may be suspended without further notice
+        </li>
+        <li>
+          You are responsible for all applicable taxes. Lazra Labs will collect
+          sales tax where required by law
+        </li>
+      </ul>
+
+      <h2>5. Authorized Use and Restrictions</h2>
+      <p>
+        You may use the Services solely for your internal business operations.
+        You agree <strong>not</strong> to:
+      </p>
+      <ul>
+        <li>
+          Resell, sublicense, or otherwise make the Services available to third
+          parties without written consent
+        </li>
+        <li>
+          Reverse engineer, decompile, or attempt to extract source code from
+          any Lazra Labs software
+        </li>
+        <li>
+          Use the Services to transmit unlawful, harmful, or deceptive content
+        </li>
+        <li>
+          Attempt to gain unauthorized access to any Lazra Labs system,
+          database, or infrastructure
+        </li>
+        <li>
+          Use the Services to build a competing product or benchmark against
+          competitors for public disclosure
+        </li>
+        <li>
+          Remove or alter any proprietary notices or labels on the Services
+        </li>
+      </ul>
+
+      <h2>6. AI-Generated Content &amp; Outputs</h2>
+      <p>
+        Lazra Labs products use large language models and AI systems to generate
+        analysis, forecasts, summaries, recommendations, and communications. You
+        acknowledge and agree that:
+      </p>
+      <ul>
+        <li>
+          AI outputs may be inaccurate, incomplete, or require human review
+          before reliance
+        </li>
+        <li>
+          AI-generated content does <strong>not</strong> constitute legal,
+          financial, accounting, investment, medical, or other professional
+          advice
+        </li>
+        <li>
+          You are solely responsible for any decisions made based on AI outputs
+          from the Services
+        </li>
+        <li>
+          You will not represent AI-generated content as independently verified
+          expert opinion without such verification
+        </li>
+        <li>
+          AI agents acting on your behalf (e.g., sending communications to your
+          customers) do so at your direction; you retain responsibility for
+          compliance with applicable communications laws including TCPA and
+          CAN-SPAM
+        </li>
+      </ul>
+
+      <h2>7. Data, Privacy &amp; Colorado Privacy Act Compliance</h2>
+      <p>
+        Your use of the Services is governed by our
+        <a href="/privacy-policy.html">Privacy Policy</a>, which is incorporated
+        herein by reference.
+      </p>
+      <p>
+        With respect to your customers&rsquo; personal data processed through
+        Lazra products, you are the data controller and Lazra Labs is the data
+        processor. You represent and warrant that:
+      </p>
+      <ul>
+        <li>
+          You have obtained all necessary consents from individuals whose data
+          you provide to the Services
+        </li>
+        <li>
+          Your use of the Services complies with the Colorado Privacy Act
+          (C.R.S. &sect; 6-1-1301 et seq.), TCPA, CAN-SPAM, and all other
+          applicable privacy and communications laws
+        </li>
+        <li>
+          You will promptly notify us of any data breach or security incident
+          involving data processed through our Services
+        </li>
+      </ul>
+      <p>
+        Upon your written request, we will execute a Data Processing Agreement
+        (DPA) consistent with applicable law.
+      </p>
+
+      <h2>8. Intellectual Property</h2>
+      <p>
+        All software, AI models, agent architectures, dashboards, documentation,
+        and related materials are the exclusive intellectual property of Lazra
+        Labs LLC. Nothing in these Terms transfers any ownership interest in our
+        IP to you.
+      </p>
+      <p>
+        You retain full ownership of your dealership data and business
+        information provided to the Services. You grant Lazra Labs a limited
+        license to process your data solely to provide the Services. We may use
+        aggregated, de-identified data derived from your use to improve our
+        products.
+      </p>
+
+      <h2>9. Confidentiality</h2>
+      <p>
+        Each party agrees to hold the other&rsquo;s non-public business,
+        technical, and financial information in confidence and not to disclose
+        it to third parties without prior written consent, except as required by
+        law. This obligation survives termination for
+        <strong>five (5) years</strong>.
+      </p>
+      <p>
+        Confidentiality obligations do not apply to information that: (a) is or
+        becomes publicly available without breach; (b) was independently known
+        prior to disclosure; (c) is rightfully received from a third party
+        without restriction; or (d) is independently developed without use of
+        confidential information.
+      </p>
+
+      <h2>10. Term and Termination</h2>
+      <ul>
+        <li>
+          These Terms remain in effect for the duration of your subscription
+        </li>
+        <li>
+          Either party may terminate with
+          <strong>30 days&rsquo; written notice</strong>
+        </li>
+        <li>
+          Either party may terminate immediately for material breach that
+          remains uncured after <strong>10 days&rsquo; written notice</strong>
+        </li>
+        <li>
+          Lazra Labs may suspend or terminate immediately for: non-payment,
+          violation of Section 5 (use restrictions), or any activity that poses
+          a security risk
+        </li>
+        <li>
+          Upon termination, your access ceases and all outstanding fees become
+          immediately due
+        </li>
+        <li>
+          We will make your data available for export for 30 days
+          post-termination, after which it may be deleted
+        </li>
+      </ul>
+      <p>Sections 6, 8, 9, 11, 12, 13, and 14 survive termination.</p>
+
+      <h2>11. Disclaimer of Warranties</h2>
+      <p>
+        THE SERVICES ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF
+        ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF
+        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR
+        THAT THE SERVICES WILL BE UNINTERRUPTED OR ERROR-FREE.
+      </p>
+      <p>
+        LAZRA LABS DOES NOT WARRANT THE ACCURACY, COMPLETENESS, OR FITNESS FOR
+        PURPOSE OF ANY AI-GENERATED OUTPUT. AI OUTPUTS ARE PROVIDED AS
+        DECISION-SUPPORT TOOLS ONLY.
+      </p>
+
+      <h2>12. Limitation of Liability</h2>
+      <p>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW:</p>
+      <ul>
+        <li>
+          LAZRA LABS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+          CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES, INCLUDING LOST PROFITS,
+          LOST REVENUE, LOST DATA, OR BUSINESS INTERRUPTION, EVEN IF ADVISED OF
+          THE POSSIBILITY OF SUCH DAMAGES
+        </li>
+        <li>
+          LAZRA LABS&rsquo; TOTAL CUMULATIVE LIABILITY FOR ALL CLAIMS ARISING
+          UNDER OR RELATED TO THESE TERMS SHALL NOT EXCEED THE
+          <strong>TOTAL FEES PAID BY YOU IN THE TWELVE (12) MONTHS</strong>
+          PRECEDING THE CLAIM
+        </li>
+        <li>
+          THESE LIMITATIONS APPLY REGARDLESS OF THE THEORY OF LIABILITY
+          (CONTRACT, TORT, NEGLIGENCE, OR OTHERWISE)
+        </li>
+      </ul>
+      <p>
+        Some jurisdictions do not allow certain liability exclusions. In such
+        cases, Lazra Labs&rsquo; liability is limited to the fullest extent
+        permitted by applicable law.
+      </p>
+
+      <h2>13. Indemnification</h2>
+      <p>
+        You agree to defend, indemnify, and hold harmless Lazra Labs LLC, its
+        officers, directors, employees, and agents from and against any claims,
+        damages, losses, liabilities, costs, and expenses (including reasonable
+        attorney&rsquo;s fees) arising from or related to: (a) your use of the
+        Services; (b) your violation of these Terms; (c) your violation of any
+        third-party rights; or (d) communications sent to your customers through
+        the Services that violate applicable law.
+      </p>
+
+      <h2>14. Dispute Resolution &amp; Governing Law</h2>
+      <p>
+        <strong>Governing Law:</strong> These Terms are governed by the laws of
+        the State of Colorado, without regard to conflict of law principles.
+      </p>
+      <p>
+        <strong>Informal Resolution:</strong> Before initiating formal
+        proceedings, the parties agree to attempt good-faith resolution by
+        contacting
+        <a href="mailto:christopher@lazralabs.ai">christopher@lazralabs.ai</a>
+        and allowing 30 days to resolve the dispute.
+      </p>
+      <p>
+        <strong>Venue:</strong> If informal resolution fails, disputes shall be
+        resolved exclusively in the state or federal courts located in Denver,
+        Colorado. Both parties consent to personal jurisdiction in those courts.
+      </p>
+      <p>
+        <strong>Class Action Waiver:</strong> You agree that any claims must be
+        brought in your individual capacity and not as a plaintiff or class
+        member in any class or representative proceeding.
+      </p>
+
+      <h2>15. Miscellaneous</h2>
+      <ul>
+        <li>
+          <strong>Entire Agreement:</strong> These Terms, together with the
+          Privacy Policy and any executed Order Forms, constitute the entire
+          agreement between the parties and supersede all prior agreements
+        </li>
+        <li>
+          <strong>Severability:</strong> If any provision is found
+          unenforceable, it will be modified to the minimum extent necessary;
+          remaining provisions continue in full force
+        </li>
+        <li>
+          <strong>No Waiver:</strong> Failure to enforce any right does not
+          constitute a waiver of that right
+        </li>
+        <li>
+          <strong>Assignment:</strong> You may not assign these Terms without
+          our prior written consent. We may assign in connection with a merger,
+          acquisition, or sale of assets
+        </li>
+        <li>
+          <strong>Force Majeure:</strong> Neither party is liable for delays or
+          failures caused by circumstances beyond their reasonable control
+        </li>
+        <li>
+          <strong>Notices:</strong> Notices under these Terms must be in writing
+          and sent to
+          <a href="mailto:christopher@lazralabs.ai">christopher@lazralabs.ai</a>
+          or your account email address
+        </li>
+      </ul>
+
+      <h2>16. Changes to These Terms</h2>
+      <p>
+        We may update these Terms at any time. For material changes, we will
+        provide at least <strong>14 days&rsquo; advance notice</strong> via
+        email or in-product notification. Continued use after the effective date
+        constitutes acceptance of the updated Terms.
+      </p>
+
+      <h2>17. Contact</h2>
+      <p>
+        <strong>Email:</strong>
+        <a href="mailto:christopher@lazralabs.ai">christopher@lazralabs.ai</a
+        ><br />
+        <strong>Mail:</strong> Lazra Labs LLC, Colorado, United States
+      </p>
+
+      <div
+        style="
+          margin-top: 40px;
+          padding-top: 20px;
+          border-top: 1px solid var(--subtle);
+          font-size: 12px;
+          color: var(--muted);
+        "
+      >
+        See also: <a href="/privacy-policy.html">Privacy Policy</a>
+      </div>
+    </div>
+    <footer>
+      <img
+        src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Assets/Logo/TRANPARENT.png"
+        alt="Lazra Labs"
+      />
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms &amp; Conditions</a>
+        <a href="mailto:christopher@lazralabs.ai">Contact</a>
+      </div>
+      <div class="footer-copy">&copy; 2026 Lazra Labs LLC</div>
+    </footer>
+  </body>
+</html>
