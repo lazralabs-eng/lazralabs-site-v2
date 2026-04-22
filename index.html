@@ -1217,7 +1217,6 @@
       transition: opacity 0.2s;
     }
     .mobile-close:hover { opacity: 1; }
-    .mobile-menu { position: relative; }
 
     /* ── MNAV links ── */
     .mnav-link {
@@ -2026,28 +2025,7 @@
     })();
   </script>
   <script>
-    // Hamburger menu
-    (function() {
-      var btn = document.getElementById('hamburgerBtn');
-      var menu = document.getElementById('mobileMenu');
-      if (!btn || !menu) return;
-      btn.addEventListener('click', function() {
-        var isOpen = menu.classList.toggle('open');
-        btn.classList.toggle('open', isOpen);
-        document.body.style.overflow = isOpen ? 'hidden' : '';
-      });
-      var links = menu.querySelectorAll('.mobile-nav-link');
-      for (var i = 0; i < links.length; i++) {
-        links[i].addEventListener('click', function() {
-          menu.classList.remove('open');
-          btn.classList.remove('open');
-          document.body.style.overflow = '';
-        });
-      }
-    })();
-  </script>
-  <script>
-    // ── Hamburger ──
+    // ── Hamburger (single handler — duplicate listeners were opening then closing on every tap) ──
     (function() {
       var btn = document.getElementById('hamburgerBtn');
       var menu = document.getElementById('mobileMenu');
