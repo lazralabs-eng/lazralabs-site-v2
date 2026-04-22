@@ -381,8 +381,8 @@
             flex: 1;
           }
           .lazra-widget-footer {
-            padding: 8px 8px 14px 8px;
-            gap: 6px;
+            padding: 10px 16px 14px 16px;
+            gap: 8px;
           }
           .lazra-widget-send {
             flex-shrink: 0;
