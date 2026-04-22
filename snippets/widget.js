@@ -283,6 +283,8 @@
           z-index: 2147483000;
           font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
           -webkit-text-size-adjust: 100%;
+          box-sizing: border-box;
+          max-width: 100%;
         }
   
         .lazra-widget-toggle {
@@ -337,8 +339,13 @@
           bottom: 90px;
           right: ${r};
           left: ${t};
-          width: min(380px, calc(100vw - 48px));
+          /* Use % of layout viewport — 100vw on iOS Safari is often wider than the visible frame */
+          width: min(380px, calc(100% - 48px));
+          max-width: calc(100% - 48px);
+          min-width: 0;
+          box-sizing: border-box;
           max-height: 75vh;
+          max-height: 75dvh;
           background:
             radial-gradient(circle at top left, rgba(155, 110, 255, 0.32), rgba(20, 10, 40, 0.92) 60%),
             rgba(5, 2, 15, 0.98);
@@ -356,18 +363,21 @@
         /* ── MOBILE FIXES ── */
         @media (max-width: 600px) {
           .lazra-widget-container {
-            bottom: 16px;
-            right: 16px !important;
+            bottom: max(16px, env(safe-area-inset-bottom, 0px));
+            right: max(12px, env(safe-area-inset-right, 0px)) !important;
             left: auto !important;
           }
           .lazra-widget-window {
             position: fixed;
-            bottom: 88px;
-            right: 8px !important;
-            left: 8px !important;
+            bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+            left: max(12px, env(safe-area-inset-left, 0px)) !important;
+            right: max(12px, env(safe-area-inset-right, 0px)) !important;
             width: auto !important;
-            max-width: calc(100vw - 16px);
+            max-width: none !important;
+            min-width: 0 !important;
+            box-sizing: border-box;
             max-height: 75vh;
+            max-height: 75dvh;
             border-radius: 18px;
           }
           .lazra-widget-toggle {
@@ -382,6 +392,7 @@
           }
           .lazra-widget-footer {
             padding: 10px 16px 14px 16px;
+            padding-bottom: max(14px, calc(10px + env(safe-area-inset-bottom, 0px)));
             gap: 8px;
           }
           .lazra-widget-send {
@@ -457,7 +468,9 @@
   
         .lazra-widget-messages {
           flex: 1;
+          min-width: 0;
           padding: 10px 12px 6px 12px;
+          overflow-x: hidden;
           overflow-y: auto;
           display: flex;
           flex-direction: column;
@@ -467,7 +480,7 @@
           -webkit-overflow-scrolling: touch;
         }
   
-        .lazra-msg-row { display: flex; width: 100%; }
+        .lazra-msg-row { display: flex; width: 100%; min-width: 0; }
         .lazra-msg-row.assistant { justify-content: flex-start; }
         .lazra-msg-row.user { justify-content: flex-end; }
   
@@ -479,6 +492,7 @@
           line-height: 1.4;
           white-space: pre-wrap;
           word-wrap: break-word;
+          overflow-wrap: anywhere;
         }
   
         .lazra-msg-bubble.assistant {
@@ -501,11 +515,14 @@
         .lazra-widget-footer {
           border-top: 1px solid rgba(255,255,255,0.08);
           padding: 8px 10px 9px 10px;
+          padding-bottom: max(9px, env(safe-area-inset-bottom, 0px));
           display: flex;
           align-items: flex-end;
           gap: 8px;
           background: rgba(5,0,20,0.98);
           flex-shrink: 0;
+          min-width: 0;
+          box-sizing: border-box;
         }
   
         .lazra-widget-input {
@@ -568,7 +585,13 @@
         .lazra-quick-reply:active { transform: translateY(1px); }
         .lazra-quick-reply:focus-visible { outline: none; box-shadow: 0 6px 18px rgba(0,0,0,0.18), 0 0 0 3px rgba(245,201,106,0.22); border-color: rgba(245,201,106,0.35); }
   
-        .lazra-quick-replies { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .lazra-quick-replies {
+          display: flex;
+          gap: 8px;
+          margin-top: 10px;
+          flex-wrap: wrap;
+          max-width: 100%;
+        }
   
         .lazra-quick-reply.active,
         .lazra-quick-reply:disabled {
