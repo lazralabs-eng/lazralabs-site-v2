@@ -102,6 +102,9 @@
           height: 58px;
           padding: 2.5px;
         }
+        .lazra-widget-input {
+          font-size: 16px;
+        }
       }
 
       .lazra-widget-header {
@@ -214,19 +217,20 @@
         background: rgba(5,0,20,0.98);
       }
 
-      /* iOS zoom fix: keep 16px */
+      /* 14px on desktop; 16px on small screens (iOS zoom-on-focus fix) */
       .lazra-widget-input {
         flex: 1;
-        min-height: 32px;
+        min-height: 30px;
         max-height: 80px;
         resize: none;
         border-radius: 999px;
         border: 1px solid rgba(255,255,255,0.15);
         background: rgba(12, 8, 35, 0.96);
         color: #f7f4ff;
-        font-size: 16px;
-        line-height: 1.3;
-        padding: 7px 11px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+        font-size: 14px;
+        line-height: 1.35;
+        padding: 6px 12px;
         outline: none;
       }
 
