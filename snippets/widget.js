@@ -152,6 +152,7 @@
   var s = {
     apiUrl: c.getAttribute("data-api-url") || "",
     dealer: c.getAttribute("data-dealer") || "UNKNOWN_DEALER",
+    forceMode: c.getAttribute("data-mode") || "",
     brandColor: c.getAttribute("data-brand-color") || "#a855f7",
     position: c.getAttribute("data-position") || "bottom-right",
     widgetTitle: c.getAttribute("data-title") || "Claire, your concierge",
@@ -174,6 +175,7 @@
     .trim()
     .toUpperCase();
   var INTENT_KEY = "lazra_claire_intent_" + s.dealer;
+  if (s.forceMode === "dealer") window.__claireDemoIntent = "dealer";
   R(window.__claireDemoIntent || L());
 
   function D() {
@@ -777,7 +779,9 @@
       window.__clairePresetHint = "";
       window.__clairePresetQuickReplies = [];
       var intentMode =
-        window.__claireDemoIntent === "dealer" ? "dealer" : "retail";
+        s.forceMode === "dealer" || window.__claireDemoIntent === "dealer"
+          ? "dealer"
+          : "retail";
       var i = {
         messages: P(),
         sessionId: o.sessionId,
