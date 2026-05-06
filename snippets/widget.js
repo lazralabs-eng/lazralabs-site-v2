@@ -75,7 +75,7 @@
       return {
         intent: "platform",
         reply:
-          "Great question \u2014 Lazra Labs is an AI platform built specifically for dealerships. We turn missed opportunities into action: unworked leads, declined ROs, stale trades, unread financials. Want to see a live demo with Chris? Takes 30 minutes.",
+          "Lazra is an AI platform built inside a working dealership \u2014 not a software lab. DealerDash, Ledger, IntelBot, and our full agent lineup run overnight and report every morning. No DMS integration required. Want the 30-minute walkthrough?\n\nhttps://calendly.com/lazralabs/30min\n\nWhat\u2019s your name, role, and store?",
         quickReplies: [
           "Book a demo",
           "What\u2019s DealerDash?",
@@ -94,8 +94,8 @@
       return {
         intent: "platform",
         reply:
-          "Perfect \u2014 here\u2019s Chris\u2019s calendar: calendly.com/lazralabs/30min. Takes 30 minutes. You\u2019ll see a live system, not a pitch deck.",
-        quickReplies: ["Book at Calendly", "Tell me more first"],
+          "Here\u2019s the link \u2014 30 minutes, live system, no pitch deck:\n\nhttps://calendly.com/lazralabs/30min\n\nSend your name and store and I\u2019ll flag it for the team.",
+        quickReplies: ["What\u2019s DealerDash?", "Tell me about pricing"],
       };
     }
 
