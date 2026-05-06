@@ -674,7 +674,7 @@
     var y = document.createElement("textarea");
     y.className = "lazra-widget-input";
     y.setAttribute("rows", "1");
-    y.setAttribute("placeholder", "Ask about vehicles, service, pricing\u2026");
+    y.setAttribute("placeholder", "Ask about DealerDash, agents, pricing\u2026");
     var A = document.createElement("button");
     A.className = "lazra-widget-send";
     A.innerHTML = "\u27A4";
@@ -740,7 +740,7 @@
       i.className = "lazra-msg-bubble assistant";
       var n = document.createElement("div");
       n.textContent =
-        "Hey there! Are you shopping for a vehicle, need service help, or are you exploring Lazra Labs for your dealership?";
+        "Hey — I\u2019m Claire, Lazra\u2019s concierge. I can walk you through the products, pricing, or how our agents plug into your store. What are you curious about?";
       i.appendChild(n);
       a.appendChild(i);
       e.appendChild(a);
