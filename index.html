@@ -11,6 +11,8 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      --layout-max: 1440px;
+      --gutter: 48px;
       --navy: #0D1828;
       --navy-mid: #1B2A4A;
       --navy-light: #243557;
@@ -112,7 +114,7 @@
       min-height: calc(100vh - 60px);  /* fills below nav, ticker at fold */
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 60px;
+      gap: clamp(40px, 4vw, 72px);
       align-items: center;
       padding: 100px 48px 60px;
       position: relative;
@@ -130,7 +132,7 @@
     .hero-right {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: center;
       position: relative;
       min-width: 0;
     }
@@ -357,7 +359,7 @@
     .product-section {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 80px;
+      gap: clamp(40px, 5vw, 72px);
       align-items: center;
     }
 
@@ -834,11 +836,45 @@
 
     /* ── FOOTER ── */
     footer {
-      padding: 40px 48px;
+      padding: 40px 48px 32px;
       border-top: 1px solid var(--subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    footer > div {
+      max-width: var(--layout-max);
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+    }
+
+    /* Ultra-wide: keep copy and mockups clustered instead of pinned to opposite edges */
+    @media (min-width: 1024px) {
+      nav,
+      .hero,
+      section,
+      footer {
+        padding-left: max(var(--gutter), calc((100% - var(--layout-max)) / 2));
+        padding-right: max(var(--gutter), calc((100% - var(--layout-max)) / 2));
+      }
+      .cta-banner {
+        max-width: var(--layout-max);
+        width: min(100% - 96px, var(--layout-max));
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    @media (min-width: 1800px) {
+      .hero {
+        min-height: auto;
+        padding-bottom: 72px;
+      }
+      .hero-stat-row {
+        margin-top: 48px;
+      }
     }
 
     .footer-logo {
@@ -1597,7 +1633,7 @@
   </section>
 
   <!-- AGENTS CAROUSEL -->
-  <section id="agents" class="products-section" style="padding:100px 48px;">
+  <section id="agents" class="products-section">
     <div class="products-header">
       <div class="reveal">
         <div class="section-label">Full Product Suite</div>
@@ -1789,7 +1825,7 @@
   </section>
 
   <!-- GOVERNANCE -->
-  <section id="governance" style="padding: 100px 48px;">
+  <section id="governance">
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start;">
       <div class="reveal">
         <div class="section-label">Governance Layer</div>
@@ -1924,8 +1960,8 @@
   </div>
 
   <!-- FOOTER -->
-  <footer style="padding:40px 48px 32px; border-top:1px solid var(--subtle);">
-    <div style="max-width:1200px; margin:0 auto;">
+  <footer>
+    <div>
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:20px;">
         <img src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Assets/Logo/TRANPARENT.png" alt="Lazra Labs" style="height:26px; opacity:0.85;" />
         <div style="display:flex; gap:28px; flex-wrap:wrap; align-items:center; list-style:none;">
