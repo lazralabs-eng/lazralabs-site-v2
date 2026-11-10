@@ -2,7 +2,9 @@
 
 Static marketing site for **Lazra Nexus**: "One mind for the entire store." Main entry is `index.html` (inline CSS and JS, no build step). Legal: `privacy-policy.html`, `terms.html`.
 
-The page presents one product, Lazra Nexus, with four instruments (DealerDash, ReconDash, Ledger, BlockIQ), a private agent roster (only Claire is named) and no pricing. Every call to action books a private briefing on Calendly.
+The page presents one product, Lazra Nexus: the hub ("Every store. One surface.") and its four dashboards (DealerDash, ReconDash, Ledger, BlockIQ), each shown with a product illustration. It is platform first. Agents get one line ("a small private roster"), Claire is the only one named, and there is no pricing. Every call to action books a private briefing on Calendly.
+
+The hub panel and the dashboard cards are HTML and CSS illustrations with made-up figures (the panel says "Illustrative figures"). They are not screenshots and not live data.
 
 ## Design tokens
 

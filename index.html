@@ -248,72 +248,98 @@
       color: var(--gold);
     }
 
-    /* ── INSTRUMENTS ── */
-    .instruments { margin-top: 58px; border-top: 1px solid var(--hairline); }
-    .instrument {
-      position: relative;
-      display: grid; grid-template-columns: 54px 1fr;
-      align-items: baseline;
-      padding: 28px 0;
-      border-bottom: 1px solid var(--hairline);
-      transition: padding-left 0.5s ease;
+    /* ── SURFACE (the hub) ── */
+    .wrap.stack { flex-direction: column; gap: 56px; }
+    .col.wide { max-width: 720px; }
+    .panel {
+      position: relative; width: 100%;
+      border: 1px solid var(--gold-line);
+      background: linear-gradient(180deg, rgba(20,19,17,0.86), rgba(10,10,11,0.9));
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      box-shadow: 0 60px 120px -40px rgba(0,0,0,0.9), inset 0 1px 0 rgba(228,207,154,0.12);
     }
-    .instrument::after {
-      content: ''; position: absolute; left: 0; bottom: -1px;
-      width: 0; height: 1px; background: var(--gold);
-      transition: width 0.7s ease;
+    .panel::before {
+      content: ''; position: absolute; left: 10%; right: 10%; top: -1px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-pale), transparent);
     }
-    .instrument:hover { padding-left: 14px; }
-    .instrument:hover::after { width: 100%; }
-    .instrument .num {
-      font-family: var(--serif); font-style: italic; font-size: 19px;
-      color: var(--gold);
+    .p-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+      padding: 20px 28px; border-bottom: 1px solid var(--hairline);
     }
-    .instrument h3 {
-      font-family: var(--serif); font-weight: 400;
-      font-size: clamp(27px, 2.5vw, 35px); line-height: 1.1;
-      letter-spacing: 0.005em;
-      display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 16px;
+    .p-brand { font-family: var(--serif); font-size: 22px; letter-spacing: 0.02em; }
+    .p-brand span { color: var(--faint); font-style: italic; margin-left: 12px; font-size: 18px; }
+    .p-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .p-chips span {
+      font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+      padding: 7px 13px; border: 1px solid var(--hairline); color: var(--faint);
     }
-    .instrument h3 small {
-      font-family: var(--sans); font-weight: 400;
-      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
-      color: var(--faint);
+    .p-chips span.on { color: var(--obsidian); background: var(--gold); border-color: var(--gold); }
+    .p-note { font-size: 9.5px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--faint); }
+    .p-grid { display: grid; grid-template-columns: 1.05fr 1fr; }
+    .p-col { padding: 26px 28px 28px; }
+    .p-col + .p-col { border-left: 1px solid var(--hairline); }
+    .p-label {
+      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 14px;
     }
-    .instrument h3 small.dev { color: var(--gold); }
-    .instrument p { margin-top: 9px; font-size: 15px; color: var(--muted); max-width: 42ch; }
+    .fy { list-style: none; }
+    .fy li {
+      display: grid; grid-template-columns: 10px 1fr auto; gap: 16px; align-items: center;
+      padding: 15px 0; border-top: 1px solid var(--hairline);
+    }
+    .fy i { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 12px var(--gold); }
+    .fy i.watch { background: transparent; border: 1px solid var(--faint); box-shadow: none; }
+    .fy b { display: block; font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.2; color: var(--bone); }
+    .fy small { display: block; margin-top: 3px; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--faint); }
+    .fy em { font-style: normal; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-pale); white-space: nowrap; }
+    .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); }
+    .tile { background: #0C0C0D; padding: 18px 18px 16px; min-height: 118px; display: flex; flex-direction: column; }
+    .tile h4 { font-family: var(--sans); font-weight: 400; font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--muted); }
+    .tile .fig { font-family: var(--serif); font-weight: 300; font-size: 44px; line-height: 1; margin-top: 12px; color: var(--bone); }
+    .tile .fig sub { font-family: var(--sans); font-size: 11px; letter-spacing: 0.06em; color: var(--gold-pale); margin-left: 8px; vertical-align: baseline; bottom: 0; }
+    .tile p { margin-top: auto; padding-top: 8px; font-size: 12px; color: var(--faint); }
+    .tile svg { display: block; width: 100%; height: 44px; margin-top: 12px; }
+    .tile.soon .fig { font-size: 22px; font-style: italic; color: var(--faint); margin-top: 18px; }
+    .stores { margin-top: 22px; }
+    .stores div { display: grid; grid-template-columns: 74px 1fr 46px; gap: 14px; align-items: center; padding: 7px 0; font-size: 12px; color: var(--muted); }
+    .stores u { display: block; height: 2px; background: var(--hairline); position: relative; text-decoration: none; }
+    .stores u::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: var(--w); background: linear-gradient(90deg, var(--gold), var(--gold-pale)); }
+    .stores div.behind u::after { background: rgba(237,232,223,0.4); }
+    .stores span:last-child { text-align: right; color: var(--bone); font-variant-numeric: tabular-nums; }
+    .stores div.behind span:last-child { color: var(--gold-pale); }
 
-    /* ── ROSTER ── */
-    .roster { margin: 58px auto 0; max-width: 520px; border-top: 1px solid var(--hairline); text-align: left; }
-    .roster li {
-      list-style: none;
-      display: flex; align-items: center; justify-content: space-between; gap: 24px;
-      padding: 19px 2px;
-      border-bottom: 1px solid var(--hairline);
+    /* ── INSTRUMENTS ── */
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); width: 100%; }
+    .card {
+      position: relative; background: rgba(9,9,10,0.9);
+      padding: 34px 34px 32px;
+      transition: background 0.6s ease;
     }
-    .roster .role {
-      font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase;
-      color: var(--faint);
-    }
-    .roster .name { font-family: var(--serif); font-size: 24px; line-height: 1; color: var(--bone); }
-    .roster .name.known { color: var(--gold-pale); font-style: italic; }
-    .redact {
-      display: inline-block; height: 12px;
-      background: linear-gradient(90deg, rgba(197,162,88,0.5), rgba(197,162,88,0.16));
-      position: relative; overflow: hidden;
-    }
-    .redact::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(228,207,154,0.75), transparent);
-      transform: translateX(-120%);
-      animation: sheen 6s ease-in-out infinite;
-    }
-    .roster li:nth-child(3) .redact::after { animation-delay: 1.1s; }
-    .roster li:nth-child(4) .redact::after { animation-delay: 2.2s; }
-    .roster li:nth-child(5) .redact::after { animation-delay: 3.3s; }
-    .roster li:nth-child(6) .redact::after { animation-delay: 4.4s; }
-    @keyframes sheen { 0%, 62% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
-    .roster-note { margin-top: 30px; font-size: 13px; color: var(--faint); letter-spacing: 0.04em; }
+    .card::after { content: ''; position: absolute; left: 0; top: 0; width: 0; height: 1px; background: var(--gold); transition: width 0.8s ease; }
+    .card:hover { background: rgba(17,16,14,0.94); }
+    .card:hover::after { width: 100%; }
+    .card .num { font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--gold); }
+    .card h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 2.7vw, 40px); line-height: 1.1; margin-top: 6px; }
+    .card .kind { margin-top: 8px; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--faint); }
+    .card .kind b { font-weight: 400; color: var(--gold); margin-left: 12px; }
+    .card p { margin-top: 16px; font-size: 15px; color: var(--muted); max-width: 44ch; }
+    .viz { margin-top: 28px; height: 96px; }
+    .viz svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .bars { display: flex; align-items: flex-end; gap: 9px; height: 100%; border-bottom: 1px solid var(--hairline); position: relative; }
+    .bars i { flex: 1; height: var(--h); background: linear-gradient(180deg, rgba(228,207,154,0.9), rgba(197,162,88,0.25)); transform-origin: bottom; }
+    .bars i.dim { background: rgba(237,232,223,0.14); }
+    .bars::after { content: 'Pace'; position: absolute; left: 0; right: 0; top: 34%; border-top: 1px dashed var(--gold-line); font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--faint); text-align: right; padding-top: 4px; }
+    .pipe { display: grid; grid-template-columns: repeat(5, 1fr); height: 100%; align-items: center; position: relative; }
+    .pipe::before { content: ''; position: absolute; left: 10%; right: 10%; top: 34px; height: 1px; background: var(--gold-line); }
+    .pipe div { text-align: center; position: relative; }
+    .pipe b { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--gold-line); background: #0B0B0C; font-family: var(--serif); font-weight: 400; font-size: 19px; color: var(--bone); }
+    .pipe div.hot b { border-color: var(--gold-pale); color: var(--gold-pale); box-shadow: 0 0 22px rgba(197,162,88,0.35); }
+    .pipe span { display: block; margin-top: 9px; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); }
+    .rank { display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
+    .rank div { display: grid; grid-template-columns: 26px 1fr 54px; gap: 14px; align-items: center; font-size: 11px; color: var(--faint); letter-spacing: 0.08em; }
+    .rank b { font-family: var(--serif); font-weight: 400; font-size: 20px; color: var(--gold-pale); }
+    .rank u { display: block; height: 9px; text-decoration: none; background: linear-gradient(90deg, rgba(197,162,88,0.55), rgba(197,162,88,0.08)); width: var(--w); }
+    .rank span { text-align: right; text-transform: uppercase; letter-spacing: 0.2em; font-size: 9px; }
 
     /* ── GOVERNANCE ── */
     .tenets { margin-top: 58px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 44px; border-top: 1px solid var(--hairline); }
@@ -323,6 +349,7 @@
       margin-bottom: 10px;
     }
     .tenet p { font-size: 14.5px; color: var(--muted); line-height: 1.7; }
+    .aside { margin-top: 34px; font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--muted); max-width: 60ch; }
 
     /* ── INVITATION ── */
     .invite h2 { font-size: clamp(54px, 8vw, 124px); }
@@ -363,9 +390,15 @@
       .wrap.right { justify-content: flex-start; }
       .col { max-width: 620px; }
       .tenets { grid-template-columns: 1fr; }
+      .p-grid, .cards { grid-template-columns: 1fr; }
+      .p-col + .p-col { border-left: 0; border-top: 1px solid var(--hairline); }
+      .p-note { display: none; }
+      .card { padding: 28px 24px; }
+      .wrap.stack { gap: 40px; }
+      .surface, .tools { align-items: center; }
       .scroll-cue { display: none; }
-      h1, h2, .lede, .instrument p, .tenet p, .facts li { text-shadow: 0 0 22px var(--obsidian), 0 0 8px var(--obsidian); }
-      .invite, .private { align-items: center; }
+      h1, h2, .lede, .tenet p, .facts li { text-shadow: 0 0 22px var(--obsidian), 0 0 8px var(--obsidian); }
+      .invite { align-items: center; }
     }
     @media (max-width: 480px) {
       nav { padding: 20px var(--gutter); }
@@ -374,13 +407,20 @@
       .nav-links a.nav-cta { padding: 10px 14px; letter-spacing: 0.18em; font-size: 10px; }
       .actions { gap: 24px; }
       .btn { padding: 17px 24px; letter-spacing: 0.2em; }
-      .instrument { grid-template-columns: 40px 1fr; }
-      .roster .name { font-size: 21px; }
+      .p-bar, .p-col { padding-left: 18px; padding-right: 18px; }
+      .tile .fig { font-size: 36px; }
+      .tile .fig sub { display: block; margin: 8px 0 0; }
+      .fy b { font-size: 18px; }
+      .fy em { display: none; }
+      .fy li { grid-template-columns: 10px 1fr; }
+      .pipe b { width: 32px; height: 32px; font-size: 16px; }
+      .pipe::before { top: 31px; }
+      .pipe span { font-size: 8px; letter-spacing: 0.1em; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
-      .grain, .scroll-cue span, .redact::after { animation: none; }
+      .grain, .scroll-cue span { animation: none; }
       .rv { transition: none; opacity: 1; transform: none; }
       #stage { transition: none; }
     }
@@ -398,8 +438,8 @@
     <a href="#top" class="wordmark" aria-label="Lazra Nexus, home">Lazra <i>Nexus</i></a>
     <ul class="nav-links">
       <li><a href="#premise">Premise</a></li>
+      <li><a href="#surface">Nexus</a></li>
       <li><a href="#instruments">Instruments</a></li>
-      <li><a href="#roster">Roster</a></li>
       <li><a href="#governance">Governance</a></li>
       <li class="keep"><a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener" class="nav-cta">Request a briefing</a></li>
     </ul>
@@ -435,46 +475,53 @@
           <p class="lede rv d2">Nexus reads the store's own data and places every decision that matters in front of the people who make it. One surface. One tap to where it is settled.</p>
           <ul class="facts rv d3">
             <li><span>i</span>Drawn from your own numbers, not an industry average.</li>
-            <li><span>ii</span>No DMS integration required.</li>
+            <li><span>ii</span>One sign-in across every dashboard and every store.</li>
             <li><span>iii</span>Proven on a live showroom floor before it reaches yours.</li>
           </ul>
         </div>
       </div>
     </section>
 
-    <!-- II. INSTRUMENTS -->
-    <section id="instruments" data-shape="1" data-x="0.46" data-y="0" data-scale="0.92" data-alpha="1" data-mx="0" data-my="0.74" data-mscale="0.66" data-malpha="0.2">
-      <div class="wrap">
-        <div class="col">
-          <div class="eyebrow rv">II &nbsp; The instruments</div>
-          <h2 class="rv d1">Four instruments. <em>One intelligence.</em></h2>
-          <div class="instruments">
-            <div class="instrument rv d2">
-              <div class="num">i</div>
-              <div>
-                <h3>DealerDash <small>Variable operations</small></h3>
-                <p>Pace, pay and performance for every desk, as it happens.</p>
-              </div>
+    <!-- II. THE SURFACE -->
+    <section id="surface" class="surface" data-shape="3" data-x="0.35" data-y="-0.8" data-scale="1.25" data-alpha="0.3" data-mx="0" data-my="-0.8" data-mscale="0.9" data-malpha="0.22">
+      <div class="wrap stack">
+        <div class="col wide">
+          <div class="eyebrow rv">II &nbsp; The surface</div>
+          <h2 class="rv d1">Every store. <em>One surface.</em></h2>
+          <p class="lede rv d2">Nexus opens on what needs a decision today, ranked. Every dashboard behind it is one tap away, with the store and the month carried along.</p>
+        </div>
+        <div class="panel rv d2" role="img" aria-label="Illustration of the Nexus hub: today's decisions ranked, each store against pace, and a tile for every instrument">
+          <div aria-hidden="true">
+            <div class="p-bar">
+              <div class="p-brand">Nexus <span>Good morning.</span></div>
+              <div class="p-chips"><span class="on">All stores</span><span>North</span><span>Central</span><span>West</span></div>
+              <div class="p-note">Illustrative figures</div>
             </div>
-            <div class="instrument rv d3">
-              <div class="num">ii</div>
-              <div>
-                <h3>ReconDash <small>Reconditioning</small></h3>
-                <p>Every vehicle, every stage, timestamped. Nothing waits unseen.</p>
+            <div class="p-grid">
+              <div class="p-col">
+                <div class="p-label">For you</div>
+                <ul class="fy">
+                  <li><i></i><div><b>Central is 11% behind pace</b><small>DealerDash &middot; act today</small></div><em>Open</em></li>
+                  <li><i></i><div><b>Three vehicles late in detail</b><small>ReconDash &middot; act today</small></div><em>Open</em></li>
+                  <li><i class="watch"></i><div><b>Statement due by the 12th</b><small>Ledger &middot; watch</small></div><em>Open</em></li>
+                  <li><i class="watch"></i><div><b>Aged units are carrying cost</b><small>Floorplan &middot; watch</small></div><em>Open</em></li>
+                </ul>
               </div>
-            </div>
-            <div class="instrument rv d4">
-              <div class="num">iii</div>
-              <div>
-                <h3>Ledger <small>Financial intelligence</small></h3>
-                <p>The statement, read and projected. Ask it anything in plain English.</p>
-              </div>
-            </div>
-            <div class="instrument rv d5">
-              <div class="num">iv</div>
-              <div>
-                <h3>BlockIQ <small>Acquisition</small> <small class="dev">In development</small></h3>
-                <p>Auction run lists, scored into buy targets before the lane opens.</p>
+              <div class="p-col">
+                <div class="p-label">The instruments</div>
+                <div class="tiles">
+                  <div class="tile"><h4>DealerDash</h4><div class="fig">142<sub>+4% to pace</sub></div><p>Units, month to date</p></div>
+                  <div class="tile"><h4>ReconDash</h4><div class="fig">38<sub>3 late</sub></div><p>Vehicles in recon</p></div>
+                  <div class="tile"><h4>Ledger</h4>
+                    <svg viewBox="0 0 200 44" preserveAspectRatio="none" fill="none"><path d="M0 34 L28 30 L56 32 L84 22 L112 24 L140 14" stroke="#C5A258" stroke-width="1.4"/><path d="M140 14 L170 9 L200 4" stroke="#E4CF9A" stroke-width="1.4" stroke-dasharray="3 4"/><circle cx="140" cy="14" r="2.6" fill="#E4CF9A"/></svg>
+                    <p>Projected net, ahead of average</p></div>
+                  <div class="tile soon"><h4>BlockIQ</h4><div class="fig">In development</div><p>Acquisition</p></div>
+                </div>
+                <div class="stores">
+                  <div><span>North</span><u style="--w:78%"></u><span>+4%</span></div>
+                  <div class="behind"><span>Central</span><u style="--w:52%"></u><span>&minus;11%</span></div>
+                  <div><span>West</span><u style="--w:71%"></u><span>+2%</span></div>
+                </div>
               </div>
             </div>
           </div>
@@ -482,51 +529,73 @@
       </div>
     </section>
 
-    <!-- III. ROSTER -->
-    <section id="roster" class="private" data-shape="2" data-x="0" data-y="0" data-scale="1.15" data-alpha="0.3" data-mx="0" data-my="0" data-mscale="1" data-malpha="0.26">
-      <div class="wrap center">
-        <div class="col">
-          <div class="eyebrow rv">III &nbsp; The roster</div>
-          <h2 class="rv d1">The roster is <em>private.</em></h2>
-          <p class="lede rv d2">Behind Nexus, a staff of agents works through the night. Each has one job, a declared boundary and a name. We introduce them in person.</p>
-          <ul class="roster rv d3">
-            <li><span class="role">Concierge</span><span class="name known">Claire</span></li>
-            <li><span class="role">Strategy</span><span class="name"><span class="redact" style="width:92px" role="img" aria-label="Name withheld"></span></span></li>
-            <li><span class="role">Reconnaissance</span><span class="name"><span class="redact" style="width:74px" role="img" aria-label="Name withheld"></span></span></li>
-            <li><span class="role">Review</span><span class="name"><span class="redact" style="width:58px" role="img" aria-label="Name withheld"></span></span></li>
-            <li><span class="role">Orchestration</span><span class="name"><span class="redact" style="width:84px" role="img" aria-label="Name withheld"></span></span></li>
-            <li><span class="role">Undisclosed</span><span class="name"><span class="redact" style="width:66px" role="img" aria-label="Name withheld"></span></span></li>
-          </ul>
-          <p class="roster-note rv d4">Claire is receiving guests now, lower right.</p>
+    <!-- III. INSTRUMENTS -->
+    <section id="instruments" class="tools" data-shape="1" data-x="0.5" data-y="0.62" data-scale="0.6" data-alpha="0.7" data-mx="0.3" data-my="0.8" data-mscale="0.5" data-malpha="0.2">
+      <div class="wrap stack">
+        <div class="col wide">
+          <div class="eyebrow rv">III &nbsp; The instruments</div>
+          <h2 class="rv d1">Four instruments. <em>One intelligence.</em></h2>
+          <p class="lede rv d2">Each dashboard runs a part of the store on its own. Together they share one set of numbers, one sign-in and one look.</p>
+        </div>
+        <div class="cards">
+          <div class="card rv d2">
+            <div class="num">i</div>
+            <h3>DealerDash</h3>
+            <div class="kind">Variable operations</div>
+            <p>Pace, pay and performance for every desk and every store, as it happens.</p>
+            <div class="viz" aria-hidden="true"><div class="bars"><i style="--h:48%"></i><i style="--h:62%"></i><i style="--h:57%"></i><i style="--h:74%"></i><i style="--h:69%"></i><i style="--h:88%"></i><i style="--h:81%"></i><i class="dim" style="--h:66%"></i><i class="dim" style="--h:66%"></i><i class="dim" style="--h:66%"></i></div></div>
+          </div>
+          <div class="card rv d3">
+            <div class="num">ii</div>
+            <h3>ReconDash</h3>
+            <div class="kind">Reconditioning</div>
+            <p>Every vehicle, every stage, timestamped. Nothing waits unseen.</p>
+            <div class="viz" aria-hidden="true"><div class="pipe"><div><b>6</b><span>Acquired</span></div><div><b>11</b><span>Service</span></div><div class="hot"><b>9</b><span>Detail</span></div><div><b>4</b><span>Photos</span></div><div><b>8</b><span>Front line</span></div></div></div>
+          </div>
+          <div class="card rv d2">
+            <div class="num">iii</div>
+            <h3>Ledger</h3>
+            <div class="kind">Financial intelligence</div>
+            <p>The statement, read and projected. Ask it anything in plain English.</p>
+            <div class="viz" aria-hidden="true"><svg viewBox="0 0 400 96" preserveAspectRatio="none" fill="none"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C5A258" stop-opacity="0.28"/><stop offset="1" stop-color="#C5A258" stop-opacity="0"/></linearGradient></defs><path d="M0 74 L50 66 L100 70 L150 52 L200 56 L250 38 L290 34 L290 96 L0 96 Z" fill="url(#lg)"/><path d="M0 74 L50 66 L100 70 L150 52 L200 56 L250 38 L290 34" stroke="#C5A258" stroke-width="1.5" vector-effect="non-scaling-stroke"/><path d="M290 34 L340 24 L400 12" stroke="#E4CF9A" stroke-width="1.5" stroke-dasharray="4 5" vector-effect="non-scaling-stroke"/><path d="M0 95.5 L400 95.5" stroke="rgba(237,232,223,0.1)"/></svg></div>
+          </div>
+          <div class="card rv d3">
+            <div class="num">iv</div>
+            <h3>BlockIQ</h3>
+            <div class="kind">Acquisition <b>In development</b></div>
+            <p>Auction run lists, scored into buy targets before the lane opens.</p>
+            <div class="viz" aria-hidden="true"><div class="rank"><div><b>A</b><u style="--w:92%"></u><span>Buy</span></div><div><b>B</b><u style="--w:64%"></u><span>Watch</span></div><div><b>C</b><u style="--w:31%"></u><span>Pass</span></div></div></div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- IV. GOVERNANCE -->
-    <section id="governance" data-shape="3" data-x="0.7" data-y="-0.34" data-scale="1.05" data-alpha="0.6" data-mx="0.1" data-my="-0.72" data-mscale="0.9" data-malpha="0.34">
+    <section id="governance" data-shape="2" data-x="0" data-y="0" data-scale="1.15" data-alpha="0.3" data-mx="0" data-my="0" data-mscale="1" data-malpha="0.24">
       <div class="wrap">
         <div class="col" style="max-width:640px">
           <div class="eyebrow rv">IV &nbsp; Governance</div>
           <h2 class="rv d1">Discretion, <em>engineered.</em></h2>
-          <p class="lede rv d2">Intelligence without restraint is a liability. Every agent in Nexus answers to the same four rules.</p>
+          <p class="lede rv d2">A store's numbers are not for everyone. Nexus is built so the right people see the right figures, and nothing changes without a trace.</p>
           <div class="tenets">
             <div class="tenet rv d3">
-              <h3>Scoped by design</h3>
-              <p>Each agent works inside a declared boundary. Nothing touches what it does not need.</p>
+              <h3>Access by role and store</h3>
+              <p>Owner, general manager, manager, technician. Each sign-in sees its own stores and its own view. Nothing more.</p>
             </div>
             <div class="tenet rv d3">
-              <h3>Every action recorded</h3>
-              <p>A complete audit trail, surfaced to your team. Never a black box.</p>
+              <h3>Every change recorded</h3>
+              <p>Who moved it, when, and from where. History is kept, never overwritten.</p>
             </div>
             <div class="tenet rv d4">
-              <h3>Always in view</h3>
-              <p>Summaries, flags and escalations reach management as they happen.</p>
+              <h3>Private by default</h3>
+              <p>Every dashboard sits behind your own sign-in. There is no public door.</p>
             </div>
             <div class="tenet rv d4">
               <h3>Yours to leave</h3>
-              <p>No lock-in. No integration tolls. Your data stays your own.</p>
+              <p>No DMS integration required. No lock-in. Your data stays your own.</p>
             </div>
           </div>
+          <p class="aside rv d5">Behind the surface, a small private roster of agents does some of the reading. They are introduced in person.</p>
         </div>
       </div>
     </section>
