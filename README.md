@@ -1,38 +1,53 @@
-# Lazra Labs — Site v2
+# Lazra Labs — Site v2 (Lazra Nexus)
 
-Static marketing site: **“Turning Opportunity into Action.”** Main entry is `index.html` (inline CSS). Legal: `privacy-policy.html`, `terms.html`.
+Static marketing site for **Lazra Nexus**: "One mind for the entire store." Main entry is `index.html` (inline CSS and JS, no build step). Legal: `privacy-policy.html`, `terms.html`.
 
-## Brand & design tokens
+The page presents one product, Lazra Nexus, with four instruments (DealerDash, ReconDash, Ledger, BlockIQ), a private agent roster (only Claire is named) and no pricing. Every call to action books a private briefing on Calendly.
+
+## Design tokens
 
 Defined on `:root` in `index.html`:
 
 | Token | Value | Role |
 |--------|--------|------|
-| `--navy` | `#0D1828` | Page background, deep base |
-| `--navy-mid` | `#1B2A4A` | Surfaces, cards |
-| `--navy-light` | `#243557` | Layered UI |
-| `--gold` | `#C5A258` | Primary accent, CTAs, highlights |
-| `--gold-light` | `#D4B86A` | Hover / brighter gold |
-| `--gold-dim` | `rgba(197,162,88,0.15)` | Soft gold fills |
-| `--gold-border` | `rgba(197,162,88,0.25)` | Accent borders |
-| `--white` | `#F4F1EC` | Primary text |
-| `--muted` | `rgba(244,241,236,0.45)` | Secondary text |
-| `--subtle` | `rgba(244,241,236,0.12)` | Hairlines, dividers |
-
-**Semantic green (status / positive):** `#5ECC84` — used for “live” states and checkmarks in comparison blocks (not a CSS variable today; matches agent/carousel “live” styling).
-
-**Claire widget:** Embedded script uses `data-brand-color="#a855f7"` in `index.html` (purple accent for the chat chrome); site chrome stays **navy + gold**.
+| `--obsidian` | `#070708` | Page background |
+| `--gold` | `#C5A258` | The only accent: CTAs, numerals, hairlines |
+| `--gold-pale` | `#E4CF9A` | Hover and gradient highlight |
+| `--gold-line` | `rgba(197,162,88,0.28)` | Accent borders |
+| `--bone` | `#EDE8DF` | Primary text |
+| `--muted` | `rgba(237,232,223,0.58)` | Secondary text |
+| `--faint` | `rgba(237,232,223,0.34)` | Labels, fine print |
+| `--hairline` | `rgba(237,232,223,0.10)` | Dividers |
 
 ## Typography
 
-- **Font:** [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) (weights 300–800), loaded from Google Fonts in `index.html`.
-- **Logo / headings:** Same family; heavy weights (700–800) for display.
+- **Headlines:** Cormorant Garamond, weight 300, italic gold for the emphasized word.
+- **Labels and body:** Plus Jakarta Sans, weight 300 to 500; labels are uppercase with wide tracking.
+
+Both load from Google Fonts.
+
+## The stage (WebGL background)
+
+One fixed `<canvas id="stage">` behind the content, raw WebGL with no library. About 72k gold particles (26k on small screens) are positioned entirely in the vertex shader and morph between five forms as you scroll.
+
+Each `<section>` declares its own keyframe with data attributes:
+
+| Attribute | Meaning |
+|---|---|
+| `data-shape` | `0` core orb, `1` four orbiting bodies, `2` constellation, `3` lattice, `4` halo |
+| `data-x`, `data-y` | Offset of the form in clip space (desktop) |
+| `data-scale`, `data-alpha` | Size and brightness (desktop) |
+| `data-mx`, `data-my`, `data-mscale`, `data-malpha` | The same, at 900px wide and below |
+
+To restage a section, change its attributes. To add a form, add a branch to `shape()` in the vertex shader.
+
+Fallbacks: without WebGL the page shows a static gold glow (`.no-gl`); with `prefers-reduced-motion` the field holds still and only redraws on scroll; rendering pauses when the tab is hidden.
 
 ## Claire widget
 
-- Script: `snippets/widget.js`
-- Configure via `data-*` attributes on the `<script>` tag in `index.html` (`data-api-url`, `data-dealer`, `data-brand-color`, etc.).
+- Script is served from the widget CDN (`lazralabswebsitewidget.pages.dev/widget.js`), built from `lazralabs-eng/claire-bear`.
+- Configure via `data-*` attributes on the `<script>` tag at the bottom of `index.html`. `data-brand-color` is gold `#C5A258` to match the page.
 
 ## Local preview
 
-Open `index.html` in a browser, or serve the repo root with any static server (paths assume `/snippets/...` from site root).
+Serve the repo root with any static server, for example `python3 -m http.server`, and open `index.html`.

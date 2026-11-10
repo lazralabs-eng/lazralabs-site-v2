@@ -3,2185 +3,870 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lazra Labs — Turn Opportunity into Action</title>
+  <title>Lazra Nexus | Private operating intelligence for dealer groups</title>
+  <meta name="description" content="Lazra Nexus is a private operating intelligence for dealer groups. Built inside a working dealership. Offered by invitation." />
+  <meta name="theme-color" content="#070708" />
+  <meta property="og:title" content="Lazra Nexus" />
+  <meta property="og:description" content="A private operating intelligence for dealer groups. Offered by invitation." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.lazralabs.ai/" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070708'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23C5A258' stroke-width='1.5'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%23C5A258'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --layout-max: 1440px;
-      --gutter: 48px;
-      --navy: #0D1828;
-      --navy-mid: #1B2A4A;
-      --navy-light: #243557;
+      --obsidian: #070708;
+      --obsidian-raised: #0E0E10;
       --gold: #C5A258;
-      --gold-light: #D4B86A;
-      --gold-dim: rgba(197,162,88,0.15);
-      --gold-border: rgba(197,162,88,0.25);
-      --white: #F4F1EC;
-      --muted: rgba(244,241,236,0.45);
-      --subtle: rgba(244,241,236,0.12);
+      --gold-pale: #E4CF9A;
+      --gold-line: rgba(197,162,88,0.28);
+      --gold-faint: rgba(197,162,88,0.12);
+      --bone: #EDE8DF;
+      --muted: rgba(237,232,223,0.58);
+      --faint: rgba(237,232,223,0.34);
+      --hairline: rgba(237,232,223,0.10);
+      --serif: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+      --sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --gutter: clamp(22px, 6vw, 96px);
+      --max: 1320px;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
     body {
-      background: var(--navy);
-      color: var(--white);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 16px;
+      background: var(--obsidian);
+      color: var(--bone);
+      font-family: var(--sans);
+      font-weight: 300;
       line-height: 1.6;
       overflow-x: hidden;
-      width: 100%;
-      max-width: 100vw;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* ── GRAIN OVERLAY ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    ::selection { background: var(--gold); color: var(--obsidian); }
+
+    a { color: inherit; }
+
+    :focus-visible { outline: 1px solid var(--gold-pale); outline-offset: 4px; }
+
+    /* ── STAGE (WebGL) ── */
+    #stage {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
       pointer-events: none;
-      z-index: 1000;
-      opacity: 0.4;
+      opacity: 0;
+      transition: opacity 2.4s ease;
+    }
+    #stage.on { opacity: 1; }
+
+    /* Static fallback when WebGL is unavailable */
+    .no-gl body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(42vmax 42vmax at 72% 38%, rgba(197,162,88,0.20), transparent 62%),
+        radial-gradient(30vmax 30vmax at 18% 88%, rgba(197,162,88,0.08), transparent 60%);
+    }
+
+    /* Vignette and film grain */
+    .veil {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(7,7,8,0.72) 100%);
+    }
+    .grain {
+      position: fixed; inset: -50%; z-index: 1; pointer-events: none;
+      width: 200%; height: 200%;
+      opacity: 0.055;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grain 1.1s steps(6) infinite;
+    }
+    @keyframes grain {
+      0% { transform: translate(0,0); } 20% { transform: translate(-3%,2%); }
+      40% { transform: translate(2%,-4%); } 60% { transform: translate(-2%,3%); }
+      80% { transform: translate(4%,1%); } 100% { transform: translate(0,0); }
     }
 
     /* ── NAV ── */
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 20px 48px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(13,24,40,0.7);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--subtle);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 26px var(--gutter);
+      transition: background 0.5s ease, padding 0.5s ease, border-color 0.5s ease;
+      border-bottom: 1px solid transparent;
     }
-
-    .nav-logo {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 800;
-      font-size: 20px;
-      letter-spacing: 0.02em;
-      color: var(--white);
+    nav.scrolled {
+      padding-top: 16px; padding-bottom: 16px;
+      background: rgba(7,7,8,0.72);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      backdrop-filter: blur(18px) saturate(140%);
+      border-bottom-color: var(--hairline);
+    }
+    .wordmark {
+      display: inline-flex; align-items: baseline; gap: 12px;
       text-decoration: none;
+      font-family: var(--serif);
+      font-size: 21px; font-weight: 400;
+      letter-spacing: 0.42em; text-transform: uppercase;
+      color: var(--bone);
     }
-
-    .nav-logo span {
-      color: var(--gold);
+    .wordmark i {
+      font-style: normal; color: var(--gold);
+      font-size: 11px; letter-spacing: 0.38em;
+      font-family: var(--sans); font-weight: 400;
     }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 36px;
-      list-style: none;
-    }
-
+    .nav-links { display: flex; align-items: center; gap: 40px; list-style: none; }
     .nav-links a {
-      font-size: 14px;
-      font-weight: 400;
-      color: var(--muted);
       text-decoration: none;
-      letter-spacing: 0.02em;
-      transition: color 0.2s;
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.26em; text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.3s ease;
     }
+    .nav-links a:hover { color: var(--bone); }
+    .nav-links a.nav-cta {
+      color: var(--gold-pale);
+      padding: 11px 22px;
+      border: 1px solid var(--gold-line);
+      transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+    }
+    .nav-links a.nav-cta:hover { background: var(--gold); color: var(--obsidian); border-color: var(--gold); }
 
-    .nav-links a:hover { color: var(--white); }
+    /* ── LAYOUT ── */
+    main { position: relative; z-index: 2; }
 
-    .nav-cta {
+    section {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex; align-items: center;
+      padding: 140px var(--gutter);
+    }
+    .wrap { width: 100%; max-width: var(--max); margin: 0 auto; display: flex; }
+    .col { width: 100%; max-width: 560px; }
+    .wrap.right { justify-content: flex-end; }
+    .wrap.center { justify-content: center; text-align: center; }
+    .wrap.center .col { max-width: 640px; }
+
+    .eyebrow {
+      display: flex; align-items: center; gap: 16px;
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.34em; text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 34px;
+    }
+    .eyebrow::before { content: ''; width: 36px; height: 1px; background: var(--gold-line); }
+    .wrap.center .eyebrow { justify-content: center; }
+    .wrap.center .eyebrow::after { content: ''; width: 36px; height: 1px; background: var(--gold-line); }
+
+    h1, h2 {
+      font-family: var(--serif);
+      font-weight: 300;
+      letter-spacing: -0.012em;
+      color: var(--bone);
+      text-wrap: balance;
+    }
+    h1 { font-size: clamp(50px, 7.6vw, 116px); line-height: 0.98; }
+    h2 { font-size: clamp(38px, 4.8vw, 70px); line-height: 1.04; }
+    h1 em, h2 em {
+      font-style: italic; font-weight: 300;
+      background: linear-gradient(100deg, var(--gold) 0%, var(--gold-pale) 45%, var(--gold) 90%);
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+      padding-right: 0.06em;
+    }
+    .lede {
+      margin-top: 34px;
+      font-size: clamp(16px, 1.25vw, 18.5px);
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 46ch;
+    }
+    .wrap.center .lede { margin-left: auto; margin-right: auto; }
+
+    /* ── BUTTONS ── */
+    .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 34px; margin-top: 52px; }
+    .wrap.center .actions { justify-content: center; }
+    .btn {
+      position: relative; overflow: hidden;
+      display: inline-flex; align-items: center; gap: 14px;
+      padding: 19px 34px;
+      border: 1px solid var(--gold);
+      color: var(--obsidian);
       background: var(--gold);
-      color: var(--navy) !important;
-      font-weight: 600 !important;
-      font-size: 13px !important;
-      padding: 10px 20px;
-      border-radius: 6px;
-      transition: background 0.2s, transform 0.15s !important;
+      text-decoration: none;
+      font-size: 11.5px; font-weight: 500;
+      letter-spacing: 0.26em; text-transform: uppercase;
+      transition: color 0.5s ease, background 0.5s ease, letter-spacing 0.5s ease;
     }
-
-    .nav-cta:hover {
-      background: var(--gold-light) !important;
-      transform: translateY(-1px);
+    .btn:hover { background: transparent; color: var(--gold-pale); letter-spacing: 0.3em; }
+    .btn svg { width: 16px; height: 16px; transition: transform 0.5s ease; }
+    .btn:hover svg { transform: translateX(5px); }
+    .link {
+      font-size: 11.5px; font-weight: 400;
+      letter-spacing: 0.26em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--hairline);
+      transition: color 0.3s ease, border-color 0.3s ease;
     }
+    .link:hover { color: var(--gold-pale); border-color: var(--gold-line); }
 
     /* ── HERO ── */
-    .hero {
-      min-height: calc(100vh - 60px);  /* fills below nav, ticker at fold */
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(40px, 4vw, 72px);
-      align-items: center;
-      padding: 100px 48px 60px;
-      position: relative;
-      overflow: hidden;
+    .hero { padding-top: 160px; }
+    .hero .col { max-width: 760px; }
+    .scroll-cue {
+      position: absolute; left: var(--gutter); bottom: 38px;
+      display: flex; align-items: center; gap: 16px;
+      font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase;
+      color: var(--faint);
     }
-
-    .hero-left {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      min-width: 0;
-      height: 100%;
+    .scroll-cue span {
+      display: block; width: 1px; height: 46px;
+      background: linear-gradient(var(--gold), transparent);
+      transform-origin: top;
+      animation: cue 2.6s ease-in-out infinite;
     }
+    @keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
 
-    .hero-right {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      min-width: 0;
+    /* ── PREMISE ── */
+    .facts { margin-top: 54px; border-top: 1px solid var(--hairline); }
+    .facts li {
+      list-style: none;
+      display: flex; align-items: baseline; gap: 22px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--hairline);
+      font-size: 15px; color: var(--bone);
     }
-
-    /* Radial glow */
-    .hero::after {
-      content: '';
-      position: absolute;
-      top: -200px; right: -300px;
-      width: 900px; height: 900px;
-      background: radial-gradient(circle, rgba(197,162,88,0.08) 0%, transparent 65%);
-      pointer-events: none;
-    }
-
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 28px;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.1s ease forwards;
-    }
-
-    .hero-eyebrow::before {
-      content: '';
-      display: block;
-      width: 24px;
-      height: 1px;
-      background: var(--gold);
-    }
-
-    .hero h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 800;
-      font-size: clamp(44px, 6vw, 84px);
-      line-height: 1.04;
-      letter-spacing: -0.02em;
-      max-width: 900px;
-      margin-bottom: 28px;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.25s ease forwards;
-    }
-
-    .hero h1 em {
-      font-style: normal;
+    .facts li span {
+      flex: 0 0 auto; width: 26px;
+      font-family: var(--serif); font-style: italic; font-size: 17px;
       color: var(--gold);
     }
 
-    .hero-sub {
-      font-size: 18px;
-      font-weight: 300;
-      color: var(--muted);
-      max-width: 520px;
-      line-height: 1.7;
-      margin-bottom: 48px;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.4s ease forwards;
-    }
-
-    .hero-actions {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.55s ease forwards;
-    }
-
-    .btn-primary {
-      background: var(--gold);
-      color: var(--navy);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 600;
-      font-size: 15px;
-      padding: 14px 28px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-    }
-
-    .btn-primary:hover {
-      background: var(--gold-light);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(197,162,88,0.25);
-    }
-
-    .btn-ghost {
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 400;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.2s;
-    }
-
-    .btn-ghost:hover { color: var(--white); }
-    .btn-ghost::after { content: '→'; transition: transform 0.2s; }
-    .btn-ghost:hover::after { transform: translateX(4px); }
-
-    .hero-stat-row {
-      display: flex;
-      align-items: center;
-      gap: 36px;
-      margin-top: auto;
-      padding-top: 36px;
-      border-top: 1px solid var(--subtle);
-      opacity: 0;
-      animation: fadeUp 0.8s 0.7s ease forwards;
-      flex-wrap: wrap;
-    }
-
-    .hero-stat span {
-      display: block;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -0.02em;
-    }
-
-    .hero-stat p {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .stat-divider {
-      width: 1px;
-      height: 48px;
-      background: var(--subtle);
-    }
-
-    /* ── TICKER ── */
-    .ticker-wrap {
-      overflow: hidden;
-      border-top: 1px solid var(--subtle);
-      border-bottom: 1px solid var(--subtle);
-      padding: 14px 0;
-      background: rgba(197,162,88,0.04);
-      margin-top: 0;
-      display: block;
-    }
-
-    .ticker-track {
-      display: flex;
-      gap: 0;
-      width: max-content;
-      animation: ticker 30s linear infinite;
-    }
-
-    .ticker-item {
-      white-space: nowrap;
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--gold);
-      padding: 0 40px;
-    }
-
-    .ticker-item::before {
-      content: '◆';
-      margin-right: 40px;
-      opacity: 0.5;
-    }
-
-    @keyframes ticker {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
-    }
-
-    /* ── SECTION SHARED ── */
-    section {
-      padding: 100px 48px;
-    }
-
-    .section-label {
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .section-label::before {
-      content: '';
-      display: block;
-      width: 20px;
-      height: 1px;
-      background: var(--gold);
-    }
-
-    .section-h2 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: clamp(32px, 4vw, 52px);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.1;
-      margin-bottom: 20px;
-    }
-
-    .section-sub {
-      font-size: 17px;
-      font-weight: 300;
-      color: var(--muted);
-      max-width: 500px;
-      line-height: 1.7;
-    }
-
-    /* ── PRODUCT SECTION ── */
-    .product-section {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(40px, 5vw, 72px);
-      align-items: center;
-    }
-
-    .product-text { max-width: 520px; }
-
-    .product-visual {
-      background: var(--navy-mid);
-      border: 1px solid var(--subtle);
-      border-radius: 16px;
-      overflow: hidden;
+    /* ── INSTRUMENTS ── */
+    .instruments { margin-top: 58px; border-top: 1px solid var(--hairline); }
+    .instrument {
       position: relative;
+      display: grid; grid-template-columns: 54px 1fr;
+      align-items: baseline;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--hairline);
+      transition: padding-left 0.5s ease;
     }
-
-    .product-visual::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    .instrument::after {
+      content: ''; position: absolute; left: 0; bottom: -1px;
+      width: 0; height: 1px; background: var(--gold);
+      transition: width 0.7s ease;
     }
-
-    /* Dashboard mockup */
-    .dash-mock {
-      padding: 28px;
-    }
-
-    .dash-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-
-    .dash-title {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-    }
-
-    .dash-badge {
-      background: rgba(197,162,88,0.15);
-      border: 1px solid rgba(197,162,88,0.3);
+    .instrument:hover { padding-left: 14px; }
+    .instrument:hover::after { width: 100%; }
+    .instrument .num {
+      font-family: var(--serif); font-style: italic; font-size: 19px;
       color: var(--gold);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 100px;
     }
-
-    .dash-kpis {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-      align-items: stretch;
+    .instrument h3 {
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(27px, 2.5vw, 35px); line-height: 1.1;
+      letter-spacing: 0.005em;
+      display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 16px;
     }
-
-    .kpi-card {
-      background: rgba(244,241,236,0.04);
-      border: 1px solid var(--subtle);
-      border-radius: 10px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
+    .instrument h3 small {
+      font-family: var(--sans); font-weight: 400;
+      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--faint);
     }
+    .instrument h3 small.dev { color: var(--gold); }
+    .instrument p { margin-top: 9px; font-size: 15px; color: var(--muted); max-width: 42ch; }
 
-    .kpi-value { flex: 1; }
-
-    .kpi-label {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
+    /* ── ROSTER ── */
+    .roster { margin: 58px auto 0; max-width: 520px; border-top: 1px solid var(--hairline); text-align: left; }
+    .roster li {
+      list-style: none;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      padding: 19px 2px;
+      border-bottom: 1px solid var(--hairline);
     }
-
-    .kpi-value {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--white);
+    .roster .role {
+      font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--faint);
     }
-
-    .kpi-delta {
-      font-size: 11px;
-      color: #5ECC84;
-      margin-top: 4px;
+    .roster .name { font-family: var(--serif); font-size: 24px; line-height: 1; color: var(--bone); }
+    .roster .name.known { color: var(--gold-pale); font-style: italic; }
+    .redact {
+      display: inline-block; height: 12px;
+      background: linear-gradient(90deg, rgba(197,162,88,0.5), rgba(197,162,88,0.16));
+      position: relative; overflow: hidden;
     }
-
-    .dash-bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-      height: 80px;
-      margin-bottom: 20px;
-      padding: 0 4px;
+    .redact::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(228,207,154,0.75), transparent);
+      transform: translateX(-120%);
+      animation: sheen 6s ease-in-out infinite;
     }
+    .roster li:nth-child(3) .redact::after { animation-delay: 1.1s; }
+    .roster li:nth-child(4) .redact::after { animation-delay: 2.2s; }
+    .roster li:nth-child(5) .redact::after { animation-delay: 3.3s; }
+    .roster li:nth-child(6) .redact::after { animation-delay: 4.4s; }
+    @keyframes sheen { 0%, 62% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+    .roster-note { margin-top: 30px; font-size: 13px; color: var(--faint); letter-spacing: 0.04em; }
 
-    .bar {
-      flex: 1;
-      background: var(--subtle);
-      border-radius: 4px 4px 0 0;
-      position: relative;
-      transition: background 0.3s;
-    }
-
-    .bar.gold { background: linear-gradient(to top, var(--gold), rgba(197,162,88,0.4)); }
-
-    .dash-agents {
-      display: flex;
-      gap: 8px;
-    }
-
-    .agent-pill {
-      background: rgba(244,241,236,0.05);
-      border: 1px solid var(--subtle);
-      border-radius: 100px;
-      padding: 6px 12px;
-      font-size: 11px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .agent-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #5ECC84;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    /* ── AGENTS GRID ── */
-    .agents-section { background: rgba(27,42,74,0.3); }
-
-    .agents-header {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: start;
-      margin-bottom: 60px;
-    }
-
-    .agents-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-
-    .agent-card {
-      background: var(--navy-mid);
-      border: 1px solid var(--subtle);
-      border-radius: 12px;
-      padding: 24px 20px;
-      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-      cursor: default;
-    }
-
-    .agent-card:hover {
-      border-color: var(--gold-border);
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-    }
-
-    .agent-icon {
-      font-size: 24px;
-      margin-bottom: 14px;
-    }
-
-    .agent-name {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .agent-role {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .agent-status {
-      margin-top: 14px;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .agent-status.live { color: #5ECC84; }
-    .agent-status.building { color: var(--gold); }
-    .agent-status.planned { color: var(--muted); }
-
-    .status-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    /* ── HOW IT WORKS ── */
-    .how-section {
-      background: linear-gradient(180deg, transparent, rgba(197,162,88,0.03) 50%, transparent);
-    }
-
-    .how-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      margin-top: 60px;
-      background: var(--subtle);
-      border-radius: 16px;
-      overflow: hidden;
-    }
-
-    .how-step {
-      background: var(--navy);
-      padding: 40px 36px;
-      position: relative;
-    }
-
-    .how-num {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 64px;
-      font-weight: 800;
-      color: rgba(197,162,88,0.1);
-      line-height: 1;
-      margin-bottom: 20px;
-      letter-spacing: -0.04em;
-    }
-
-    .how-title {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
+    /* ── GOVERNANCE ── */
+    .tenets { margin-top: 58px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 44px; border-top: 1px solid var(--hairline); }
+    .tenet { padding: 28px 0 30px; border-bottom: 1px solid var(--hairline); }
+    .tenet h3 {
+      font-family: var(--serif); font-weight: 400; font-size: 25px; line-height: 1.15;
       margin-bottom: 10px;
     }
+    .tenet p { font-size: 14.5px; color: var(--muted); line-height: 1.7; }
 
-    .how-desc {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    /* ── PRICING ── */
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-top: 60px;
-    }
-
-    .price-card {
-      background: var(--navy-mid);
-      border: 1px solid var(--subtle);
-      border-radius: 16px;
-      padding: 36px 32px;
-      position: relative;
-      transition: border-color 0.2s, transform 0.2s;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .price-card:hover {
-      border-color: var(--gold-border);
-      transform: translateY(-4px);
-    }
-
-    .price-card.featured {
-      border-color: var(--gold-border);
-      background: linear-gradient(145deg, rgba(197,162,88,0.06), var(--navy-mid));
-    }
-
-    .price-card.featured::before {
-      content: 'Most Popular';
-      position: absolute;
-      top: -1px; left: 50%;
-      transform: translateX(-50%);
-      background: var(--gold);
-      color: var(--navy);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 5px 14px;
-      border-radius: 0 0 8px 8px;
-    }
-
-    .price-tier {
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-
-    .price-amount {
-      display: flex;
-      align-items: flex-start;
-      gap: 3px;
-      margin-bottom: 6px;
-      line-height: 1;
-    }
-
-    .price-amount sup {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 400;
-      color: var(--muted);
-      margin-top: 8px;
-      vertical-align: unset;
-    }
-
-    .price-number {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 52px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: var(--white);
-    }
-
-    .price-period {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 28px;
-    }
-
-    .price-features {
-      list-style: none;
-      margin-bottom: 32px;
-      flex: 1;
-    }
-
-    .price-features li {
-      font-size: 14px;
-      color: var(--muted);
-      padding: 8px 0;
-      border-bottom: 1px solid var(--subtle);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .price-features li::before {
-      content: '✓';
-      color: var(--gold);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .price-cta {
-      display: block;
-      text-align: center;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .price-cta.outline {
-      border: 1px solid var(--subtle);
-      color: var(--muted);
-    }
-
-    .price-cta.outline:hover {
-      border-color: var(--gold-border);
-      color: var(--white);
-    }
-
-    .price-cta.solid {
-      background: var(--gold);
-      color: var(--navy);
-    }
-
-    .price-cta.solid:hover {
-      background: var(--gold-light);
-    }
-
-    /* ── PROOF / LOGOS ── */
-    .proof-section { text-align: center; }
-
-    .proof-section .section-label {
-      justify-content: center;
-    }
-
-    .proof-section .section-label::before { display: none; }
-
-    .logo-strip {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 48px;
-      flex-wrap: wrap;
-      margin-top: 48px;
-      opacity: 0.35;
-    }
-
-    .logo-name {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--white);
-    }
-
-    /* ── CTA BANNER ── */
-    .cta-banner {
-      margin: 0 48px 100px;
-      background: linear-gradient(135deg, var(--navy-mid), rgba(197,162,88,0.08));
-      border: 1px solid var(--gold-border);
-      border-radius: 20px;
-      padding: 72px 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 40px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cta-banner::before {
-      content: '';
-      position: absolute;
-      top: -100px; right: -100px;
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(197,162,88,0.08) 0%, transparent 65%);
-      pointer-events: none;
-    }
-
-    .cta-text h2 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: clamp(28px, 3.5vw, 44px);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.15;
-      margin-bottom: 14px;
-    }
-
-    .cta-text p {
-      font-size: 16px;
-      color: var(--muted);
-    }
-
-    .cta-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 12px;
-      flex-shrink: 0;
-    }
-
-    .cta-note {
-      font-size: 12px;
-      color: var(--muted);
-    }
+    /* ── INVITATION ── */
+    .invite h2 { font-size: clamp(54px, 8vw, 124px); }
+    .invite .fine { margin-top: 40px; font-size: 13px; color: var(--faint); letter-spacing: 0.04em; }
+    .invite .fine a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--hairline); padding-bottom: 2px; transition: color 0.3s ease; }
+    .invite .fine a:hover { color: var(--gold-pale); }
 
     /* ── FOOTER ── */
     footer {
-      padding: 40px 48px 32px;
-      border-top: 1px solid var(--subtle);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      position: relative; z-index: 2;
+      padding: 34px var(--gutter) 40px;
+      border-top: 1px solid var(--hairline);
+      background: rgba(7,7,8,0.82);
     }
-
-    footer > div {
-      max-width: var(--layout-max);
-      margin-left: auto;
-      margin-right: auto;
-      width: 100%;
+    .foot { max-width: var(--max); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 18px 36px; }
+    .foot-brand { display: flex; align-items: center; gap: 16px; font-size: 11.5px; letter-spacing: 0.08em; color: var(--faint); }
+    .foot-brand img { height: 30px; width: 30px; object-fit: contain; filter: saturate(0.55) brightness(0.92); opacity: 0.85; }
+    .foot-links { display: flex; gap: 30px; flex-wrap: wrap; }
+    .foot-links a {
+      font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--faint); text-decoration: none; transition: color 0.3s ease;
     }
-
-    /* Ultra-wide: keep copy and mockups clustered instead of pinned to opposite edges */
-    @media (min-width: 1024px) {
-      nav,
-      .hero,
-      section,
-      footer {
-        padding-left: max(var(--gutter), calc((100% - var(--layout-max)) / 2));
-        padding-right: max(var(--gutter), calc((100% - var(--layout-max)) / 2));
-      }
-      .cta-banner {
-        max-width: var(--layout-max);
-        width: min(100% - 96px, var(--layout-max));
-        margin-left: auto;
-        margin-right: auto;
-      }
-    }
-
-    @media (min-width: 1800px) {
-      .hero {
-        min-height: auto;
-        padding-bottom: 72px;
-      }
-      .hero-stat-row {
-        margin-top: 48px;
-      }
-    }
-
-    .footer-logo {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 800;
-      font-size: 16px;
-      color: var(--white);
-    }
-
-    .footer-logo span { color: var(--gold); }
-
-    .footer-links {
-      display: flex;
-      gap: 28px;
-      list-style: none;
-    }
-
-    .footer-links a {
-      font-size: 13px;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover { color: var(--white); }
-
-    .footer-copy {
-      font-size: 12px;
-      color: rgba(244,241,236,0.25);
-    }
-
-
-    /* ── AGENT PHOTO CARDS ── */
-    .agent-card.has-photo {
-      padding: 0;
-      overflow: hidden;
-    }
-
-    .agent-photo-wrap {
-      position: relative;
-      height: 200px;
-      overflow: hidden;
-    }
-
-    .agent-photo-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 20%;
-      display: block;
-      transition: transform 0.4s ease;
-    }
-
-    .agent-card.has-photo:hover .agent-photo-wrap img {
-      transform: scale(1.04);
-    }
-
-    .agent-photo-overlay {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 60%;
-      background: linear-gradient(to top, var(--navy-mid), transparent);
-      pointer-events: none;
-    }
-
-    .agent-card-body {
-      padding: 20px 22px 22px;
-    }
-
-    .agent-card.has-photo .agent-name {
-      font-size: 17px;
-      margin-bottom: 6px;
-    }
-
-    .agent-card.has-photo .agent-role {
-      font-size: 13px;
-    }
-
-    .agent-card.has-photo .agent-status {
-      margin-top: 12px;
-    }
-
-
-    /* ── CAROUSEL ── */
-    .carousel-outer {
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-
-    .carousel-track {
-      display: flex;
-      gap: 16px;
-      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: transform;
-    }
-
-    .carousel-card {
-      flex: 0 0 calc((100% - 32px) / 3);
-      background: var(--navy-mid);
-      border: 1px solid var(--subtle);
-      border-radius: 14px;
-      overflow: hidden;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-
-    .carousel-card:hover { border-color: var(--gold-border); transform: translateY(-3px); }
-
-    .carousel-photo-wrap {
-      height: 220px;
-      overflow: hidden;
-      position: relative;
-      background: var(--navy-mid);
-      transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .carousel-photo-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 55%;
-      display: block;
-      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .carousel-card:hover .carousel-photo-wrap {
-      height: 320px;
-    }
-
-    .carousel-card:hover .carousel-photo-wrap img {
-      transform: scale(1.03);
-      object-position: center 60%;
-    }
-
-    .carousel-photo-overlay {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 60%;
-      background: linear-gradient(to top, var(--navy-mid) 20%, transparent);
-      pointer-events: none;
-      transition: height 0.45s ease;
-    }
-
-    .carousel-card-body {
-      padding: 18px 20px 22px;
-      position: relative;
-    }
-
-    .carousel-card-body .carousel-desc {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      margin-bottom: 0;
-      transition: max-height 0.4s ease, opacity 0.35s ease, margin-bottom 0.3s ease;
-    }
-
-    .carousel-card:hover .carousel-card-body .carousel-desc {
-      max-height: 120px;
-      opacity: 1;
-      margin-bottom: 14px;
-    }
-
-    .carousel-name {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 3px;
-    }
-
-    .carousel-title {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 10px;
-    }
-
-    .carousel-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 14px;
-    }
-
-    .carousel-status {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .carousel-status.live { color: #5ECC84; }
-    .carousel-status.soon { color: var(--muted); }
-    .carousel-status.building { color: var(--gold); }
-
-    .cs-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: currentColor;
-      display: block;
-      flex-shrink: 0;
-    }
-
-    .carousel-status.live .cs-dot { animation: pulse 2s infinite; }
-
-    .carousel-controls {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 24px;
-    }
-
-    .carousel-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 1px solid var(--subtle);
-      background: var(--navy-mid);
-      color: var(--white);
-      font-size: 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: border-color 0.2s, background 0.2s, transform 0.15s;
-      line-height: 1;
-    }
-
-    .carousel-btn:hover {
-      border-color: var(--gold-border);
-      background: var(--navy-light);
-      transform: scale(1.08);
-    }
-
-    .carousel-btn:disabled {
-      opacity: 0.3;
-      cursor: default;
-      transform: none;
-    }
-
-    .carousel-dots {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .carousel-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--subtle);
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      transition: background 0.2s, transform 0.2s;
-    }
-
-    .carousel-dot.active {
-      background: var(--gold);
-      transform: scale(1.3);
-    }
-
-    @media (max-width: 960px) {
-      .carousel-card { flex: 0 0 calc((100% - 16px) / 2); }
-    }
-
-    @media (max-width: 600px) {
-      .carousel-card { flex: 0 0 calc(100% - 0px); }
-      .carousel-photo-wrap { height: 180px; }
-    }
-
-
-
-    /* ── HAMBURGER ── */
-    .nav-hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 4px;
-      z-index: 200;
-    }
-
-    .nav-hamburger span {
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: var(--white);
-      border-radius: 2px;
-      transition: transform 0.3s, opacity 0.3s;
-    }
-
-    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-    .mobile-menu {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(13,24,40,0.98);
-      backdrop-filter: blur(20px);
-      z-index: 99;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 32px;
-    }
-
-    .mobile-menu.open { display: flex; }
-
-    .mobile-menu a {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--white);
-      text-decoration: none;
-      letter-spacing: -0.01em;
-      transition: color 0.2s;
-    }
-
-    .mobile-menu a:hover { color: var(--gold); }
-
-    .mobile-menu .mobile-cta {
-      background: var(--gold);
-      color: var(--navy) !important;
-      padding: 16px 40px;
-      border-radius: 8px;
-      font-size: 18px !important;
-    }
-
-    @media (max-width: 960px) {
-      .nav-hamburger { display: flex; }
-      .nav-links { display: none !important; }
-    }
-
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-
-    /* ── MOBILE CLOSE BTN ── */
-    .mobile-close {
-      position: absolute;
-      top: 24px; right: 24px;
-      background: none;
-      border: none;
-      color: var(--white);
-      font-size: 24px;
-      cursor: pointer;
-      line-height: 1;
-      padding: 4px 8px;
-      opacity: 0.6;
-      transition: opacity 0.2s;
-    }
-    .mobile-close:hover { opacity: 1; }
-
-    /* ── MNAV links ── */
-    .mnav-link {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--white) !important;
-      text-decoration: none;
-      letter-spacing: -0.02em;
-      transition: color 0.2s;
-      text-align: center;
-    }
-    .mnav-link:hover { color: var(--gold) !important; }
-    .mnav-cta {
-      background: var(--gold);
-      color: var(--navy) !important;
-      padding: 16px 48px;
-      border-radius: 10px;
-      font-size: 20px !important;
-      margin-top: 8px;
-    }
-    .mnav-cta:hover { background: var(--gold-light); color: var(--navy) !important; }
-
-    /* ── PROD CAROUSEL (mobile only) ── */
-    .prod-carousel-outer { overflow: hidden; }
-    .prod-carousel-track { transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); }
-    .prod-carousel-controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 20px; }
-
-    @media (max-width: 960px) {
-      .prod-carousel-track {
-        display: flex !important;
-        gap: 14px;
-      }
-      .prod-carousel-track .agent-card {
-        flex: 0 0 calc((100% - 28px) / 3);
-        min-width: 0;
-      }
-      .prod-carousel-controls { display: flex !important; }
-    }
-
-    @media (max-width: 600px) {
-      .prod-carousel-track .agent-card {
-        flex: 0 0 calc((100% - 14px) / 2);
-      }
-    }
-
-    @media (max-width: 400px) {
-      .prod-carousel-track .agent-card {
-        flex: 0 0 85%;
-      }
-    }
-
-
-    @media (hover: none) {
-      .carousel-photo-wrap { height: 200px !important; transition: none; }
-      .carousel-card:hover .carousel-photo-wrap { height: 200px !important; }
-      .carousel-card-body .carousel-desc { max-height: none !important; opacity: 1 !important; margin-bottom: 14px !important; }
-    }
-
-
-    /* ── LEDGER MOCK ── */
-    .ledger-mock {
-      width: 100%;
-      max-width: 500px;
-      background: var(--navy-mid);
-      border: 1px solid var(--subtle);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(197,162,88,0.08);
-      position: relative;
-    }
-
-    .ledger-mock::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      border-radius: 16px 16px 0 0;
-    }
-
-    .ledger-mock-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    /* ── SCROLLBAR ── */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--navy); }
-    ::-webkit-scrollbar-thumb { background: var(--navy-light); border-radius: 4px; }
+    .foot-links a:hover { color: var(--gold-pale); }
+
+    /* ── REVEAL ── */
+    .rv { opacity: 0; transform: translateY(26px); transition: opacity 1.3s cubic-bezier(.2,.7,.2,1), transform 1.3s cubic-bezier(.2,.7,.2,1); }
+    .rv.in { opacity: 1; transform: none; }
+    .rv.d1 { transition-delay: 0.12s; } .rv.d2 { transition-delay: 0.26s; }
+    .rv.d3 { transition-delay: 0.4s; } .rv.d4 { transition-delay: 0.54s; }
+    .rv.d5 { transition-delay: 0.68s; } .rv.d6 { transition-delay: 0.82s; }
+    .no-js .rv { opacity: 1; transform: none; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
-      nav { padding: 16px 24px; }
-      .nav-links { display: none; }
-      section { padding: 56px 20px; }
-      /* ── MOBILE HERO ── */
-      .hero {
-        grid-template-columns: 1fr !important;
-        display: block !important;
-        padding: 76px 20px 0 !important;
-        margin-bottom: 0 !important;
-        min-height: unset !important;
-        height: auto !important;
-        overflow: hidden !important;
-      }
-      .hero-right {
-        display: block !important;
-        margin-top: 10px;
-        margin-bottom: 0 !important;
-      }
-      .hero-right .ledger-mock {
-        max-width: 100% !important;
-        padding: 12px !important;
-        border-radius: 12px 12px 0 0 !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-        transform: none;
-      }
-      .hero-left {
-        display: block !important;
-        height: auto !important;
-      }
-      .hero-stat-row { margin-top: 14px !important; padding-top: 14px !important; gap: 10px !important; flex-wrap: wrap; }
-      .hero-stat span { font-size: 18px !important; }
-      .hero-stat p { font-size: 11px !important; }
-      .stat-divider { height: 24px !important; }
-      .hero h1 { font-size: clamp(28px, 8vw, 44px) !important; line-height: 1.06 !important; margin-bottom: 8px !important; }
-      .hero-sub { font-size: 14px !important; margin-bottom: 14px !important; line-height: 1.5 !important; }
-      .hero-eyebrow { margin-bottom: 8px !important; }
-      /* Ledger mobile: compact everything */
-      .ledger-chart, .ledger-sandbox, .ledger-insight { display: block !important; }
-      .hero-right .ledger-mock * { font-size: 11px !important; }
-      .hero-right .ledger-mock .kpi-value { font-size: 14px !important; }
-      .hero-right .ledger-mock .kpi-card { padding: 8px !important; }
-      .hero-right .ledger-mock .kpi-label { font-size: 8px !important; margin-bottom: 3px !important; }
-      .hero-right .ledger-mock .kpi-delta { font-size: 9px !important; margin-top: 2px !important; }
-      .hero-right .ledger-mock .dash-kpis { gap: 6px !important; margin-bottom: 8px !important; }
-      .ledger-chart { padding: 8px !important; margin-bottom: 8px !important; }
-      .ledger-chart .dash-bars { height: 44px !important; }
-      .ledger-sandbox { padding: 8px !important; margin-bottom: 8px !important; }
-      .ledger-sandbox > div:last-child { gap: 6px !important; }
-      .ledger-insight { padding: 8px !important; }
-      .ledger-mock-header { margin-bottom: 8px !important; }
-      .hero-right .ledger-mock { padding: 12px !important; }
-      .ledger-mock-header { margin-bottom: 12px !important; }
-      .ledger-mock .kpi-card { padding: 12px !important; }
-      .ledger-mock .kpi-value { font-size: 15px !important; }
-      .product-section { grid-template-columns: 1fr; gap: 24px; }
-      .agents-grid { grid-template-columns: repeat(2, 1fr); }
-      .agents-header { grid-template-columns: 1fr; gap: 24px; }
-      .how-grid { grid-template-columns: 1fr; }
-      .pricing-grid { grid-template-columns: 1fr; }
-      #governance > div:first-child { grid-template-columns: 1fr !important; gap: 40px !important; }
-      #governance { padding: 44px 20px 0 !important; }
-      #governance > div:last-child { margin-top: 32px !important; margin-bottom: 0 !important; }
-      .agents-grid { grid-template-columns: repeat(2, 1fr) !important; }
-      .product-visual { width: 100% !important; max-width: 100% !important; border-radius: 12px; }
-      .product-section { gap: 24px !important; }
-      .how-section { padding: 44px 20px !important; }
-      .how-grid { margin-top: 28px !important; }
-      .how-step { padding: 28px 24px !important; }
-      .how-num { font-size: 44px !important; margin-bottom: 12px !important; }
-      .cta-banner { margin: 0 16px 48px !important; padding: 36px 24px !important; flex-direction: column; align-items: flex-start; }
-      .cta-actions { align-items: flex-start; }
-      footer { padding: 32px 20px !important; } footer > div { text-align: center; } footer > div > div:first-child { justify-content: center; } footer > div > div:last-child { flex-wrap:wrap; gap:16px; justify-content:center; } footer img { margin: 0 auto; } footer > div > div:first-child > div:last-child { justify-content:center; }
+      .nav-links li:not(.keep) { display: none; }
+      section { padding: 120px var(--gutter) 96px; align-items: flex-end; }
+      .hero { align-items: flex-end; padding-bottom: 120px; }
+      .wrap.right { justify-content: flex-start; }
+      .col { max-width: 620px; }
+      .tenets { grid-template-columns: 1fr; }
+      .scroll-cue { display: none; }
+      h1, h2, .lede, .instrument p, .tenet p, .facts li { text-shadow: 0 0 22px var(--obsidian), 0 0 8px var(--obsidian); }
+      .invite, .private { align-items: center; }
+    }
+    @media (max-width: 480px) {
+      nav { padding: 20px var(--gutter); }
+      .wordmark { font-size: 18px; letter-spacing: 0.34em; }
+      .wordmark i { display: none; }
+      .nav-links a.nav-cta { padding: 10px 14px; letter-spacing: 0.18em; font-size: 10px; }
+      .actions { gap: 24px; }
+      .btn { padding: 17px 24px; letter-spacing: 0.2em; }
+      .instrument { grid-template-columns: 40px 1fr; }
+      .roster .name { font-size: 21px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .grain, .scroll-cue span, .redact::after { animation: none; }
+      .rv { transition: none; opacity: 1; transform: none; }
+      #stage { transition: none; }
     }
   </style>
 </head>
 <body>
+  <script>document.documentElement.classList.add('js');</script>
+  <noscript><style>.rv{opacity:1!important;transform:none!important}</style></noscript>
 
-  <!-- NAV -->
-  <nav>
-    <a href="#" class="nav-logo">
-      <img src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Assets/Logo/TRANPARENT.png" alt="Lazra Labs" style="height: 36px; width: auto; display: block;" />
-    </a>
+  <canvas id="stage" aria-hidden="true"></canvas>
+  <div class="veil" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <nav id="nav">
+    <a href="#top" class="wordmark" aria-label="Lazra Nexus, home">Lazra <i>Nexus</i></a>
     <ul class="nav-links">
-      <li><a href="#product">Products</a></li>
-      <li><a href="#how">How It Works</a></li>
+      <li><a href="#premise">Premise</a></li>
+      <li><a href="#instruments">Instruments</a></li>
+      <li><a href="#roster">Roster</a></li>
       <li><a href="#governance">Governance</a></li>
-      <li><a href="#pricing">Pricing</a></li>
-      <li><a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener" class="nav-cta">Request Demo</a></li>
+      <li class="keep"><a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener" class="nav-cta">Request a briefing</a></li>
     </ul>
-    <button id="hamburgerBtn" class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
   </nav>
 
-  <div id="mobileMenu" class="mobile-menu" role="dialog" aria-modal="true">
-    <button id="mobileClose" class="mobile-close" aria-label="Close menu">&#x2715;</button>
-    <a href="#product" class="mnav-link">Products</a>
-    <a href="#how" class="mnav-link">How It Works</a>
-    <a href="#pricing" class="mnav-link">Pricing</a>
-    <a href="#governance" class="mnav-link">Governance</a>
-    <a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener" class="mnav-link mnav-cta">Request Demo</a>
-  </div>
+  <main id="top">
 
-  <!-- HERO -->
-  <section class="hero">
-
-    <!-- LEFT -->
-    <div class="hero-left">
-      <div class="hero-eyebrow">Turn Opportunity into Action</div>
-      <h1>10x your staff.<br/>Zero <em>added headcount.</em></h1>
-      <p class="hero-sub">Lazra turns every missed opportunity — the unsold trade, the declined RO, the stale lead, the unread financial — into action. AI agents that work while your team sleeps.</p>
-      <div class="hero-actions">
-        <a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener" class="btn-primary">Request a Demo</a>
-        <a href="#products" class="btn-ghost">See the products</a>
+    <!-- HERO -->
+    <section class="hero" data-shape="0" data-x="0.44" data-y="0.02" data-scale="1" data-alpha="1" data-mx="0.16" data-my="0.56" data-mscale="0.72" data-malpha="0.6">
+      <div class="wrap">
+        <div class="col">
+          <div class="eyebrow rv">Lazra Nexus</div>
+          <h1 class="rv d1">One mind for the <em>entire</em> store.</h1>
+          <p class="lede rv d2">A private operating intelligence for dealer groups. Built inside a working dealership. Offered by invitation.</p>
+          <div class="actions rv d3">
+            <a class="btn" href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener">
+              Request a briefing
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M1 8h13M9.5 3.5 14 8l-4.5 4.5"/></svg>
+            </a>
+            <a class="link" href="#premise">Discover</a>
+          </div>
+        </div>
       </div>
-      <div class="hero-stat-row">
-        <div class="hero-stat"><span>8+</span><p>AI agents</p></div>
-        <div class="stat-divider"></div>
-        <div class="hero-stat"><span>24/7</span><p>Always on</p></div>
-        <div class="stat-divider"></div>
-        <div class="hero-stat"><span>10x</span><p>Your team's output</p></div>
-        <div class="stat-divider"></div>
-        <div class="hero-stat"><span>Zero</span><p>Vendor lock-in</p></div>
+      <div class="scroll-cue" aria-hidden="true"><span></span>Scroll</div>
+    </section>
+
+    <!-- I. PREMISE -->
+    <section id="premise" data-shape="0" data-x="-0.46" data-y="0" data-scale="0.82" data-alpha="0.9" data-mx="0" data-my="0.42" data-mscale="0.7" data-malpha="0.5">
+      <div class="wrap right">
+        <div class="col">
+          <div class="eyebrow rv">I &nbsp; The premise</div>
+          <h2 class="rv d1">Know what needs you, before anyone <em>tells you.</em></h2>
+          <p class="lede rv d2">Nexus reads the store's own data and places every decision that matters in front of the people who make it. One surface. One tap to where it is settled.</p>
+          <ul class="facts rv d3">
+            <li><span>i</span>Drawn from your own numbers, not an industry average.</li>
+            <li><span>ii</span>No DMS integration required.</li>
+            <li><span>iii</span>Proven on a live showroom floor before it reaches yours.</li>
+          </ul>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- RIGHT — Ledger mockup -->
-    <div class="hero-right">
-      <div class="ledger-mock">
-        <div class="ledger-mock-header">
-          <div>
-            <div style="font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">Ledger</div>
-            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; color:var(--white);">April Financial Overview</div>
-          </div>
-          <div class="dash-badge">● Live</div>
-        </div>
-
-        <!-- Key metrics row -->
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px;">
-          <div class="kpi-card">
-            <div class="kpi-label">Total Revenue</div>
-            <div class="kpi-value" style="font-size:18px;">$1.84M</div>
-            <div class="kpi-delta">↑ +8.2% MoM</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Net Gross</div>
-            <div class="kpi-value" style="font-size:18px;">$182K</div>
-            <div class="kpi-delta">↑ On pace</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Expense Ratio</div>
-            <div class="kpi-value" style="font-size:18px;">61.4%</div>
-            <div class="kpi-delta" style="color:var(--gold);">↓ Watch</div>
-          </div>
-        </div>
-
-        <!-- Revenue trend chart -->
-        <div class="ledger-chart" style="background:rgba(244,241,236,0.03); border:1px solid var(--subtle); border-radius:10px; padding:14px; margin-bottom:14px;">
-          <div style="font-size:10px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:10px;">Revenue vs Prior Year</div>
-          <div style="display:flex; align-items:flex-end; gap:5px; height:60px;">
-            <div style="flex:1; background:rgba(197,162,88,0.2); border-radius:2px 2px 0 0; height:55%;"></div>
-            <div style="flex:1; background:rgba(197,162,88,0.2); border-radius:2px 2px 0 0; height:65%;"></div>
-            <div style="flex:1; background:rgba(197,162,88,0.2); border-radius:2px 2px 0 0; height:50%;"></div>
-            <div style="flex:1; background:rgba(197,162,88,0.2); border-radius:2px 2px 0 0; height:70%;"></div>
-            <div style="flex:1; background:rgba(197,162,88,0.2); border-radius:2px 2px 0 0; height:60%;"></div>
-            <div style="flex:1; background:rgba(197,162,88,0.2); border-radius:2px 2px 0 0; height:75%;"></div>
-            <div style="flex:1; background:var(--gold); border-radius:2px 2px 0 0; height:88%;"></div>
-            <div style="flex:1; background:rgba(197,162,88,0.15); border-radius:2px 2px 0 0; height:82%; border:1px dashed rgba(197,162,88,0.4);"></div>
-            <div style="flex:1; background:rgba(197,162,88,0.15); border-radius:2px 2px 0 0; height:90%; border:1px dashed rgba(197,162,88,0.4);"></div>
-          </div>
-          <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:10px; color:rgba(244,241,236,0.25);">
-            <span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar ↗</span><span>Apr</span>
-          </div>
-        </div>
-
-        <!-- Forecast sandbox -->
-        <div class="ledger-sandbox" style="background:linear-gradient(135deg,rgba(197,162,88,0.06),rgba(197,162,88,0.02)); border:1px solid rgba(197,162,88,0.2); border-radius:10px; padding:14px; margin-bottom:14px;">
-          <div style="font-size:10px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">🧪 Sandbox Forecast — Q2</div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <div>
-              <div style="font-size:10px; color:var(--muted); margin-bottom:3px;">If units +5%</div>
-              <div style="font-size:15px; font-weight:700; color:var(--white);">+$24,200</div>
+    <!-- II. INSTRUMENTS -->
+    <section id="instruments" data-shape="1" data-x="0.46" data-y="0" data-scale="0.92" data-alpha="1" data-mx="0" data-my="0.74" data-mscale="0.66" data-malpha="0.2">
+      <div class="wrap">
+        <div class="col">
+          <div class="eyebrow rv">II &nbsp; The instruments</div>
+          <h2 class="rv d1">Four instruments. <em>One intelligence.</em></h2>
+          <div class="instruments">
+            <div class="instrument rv d2">
+              <div class="num">i</div>
+              <div>
+                <h3>DealerDash <small>Variable operations</small></h3>
+                <p>Pace, pay and performance for every desk, as it happens.</p>
+              </div>
             </div>
-            <div>
-              <div style="font-size:10px; color:var(--muted); margin-bottom:3px;">If PVR +$200</div>
-              <div style="font-size:15px; font-weight:700; color:var(--white);">+$18,600</div>
+            <div class="instrument rv d3">
+              <div class="num">ii</div>
+              <div>
+                <h3>ReconDash <small>Reconditioning</small></h3>
+                <p>Every vehicle, every stage, timestamped. Nothing waits unseen.</p>
+              </div>
+            </div>
+            <div class="instrument rv d4">
+              <div class="num">iii</div>
+              <div>
+                <h3>Ledger <small>Financial intelligence</small></h3>
+                <p>The statement, read and projected. Ask it anything in plain English.</p>
+              </div>
+            </div>
+            <div class="instrument rv d5">
+              <div class="num">iv</div>
+              <div>
+                <h3>BlockIQ <small>Acquisition</small> <small class="dev">In development</small></h3>
+                <p>Auction run lists, scored into buy targets before the lane opens.</p>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- AI insight -->
-        <div class="ledger-insight" style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:rgba(244,241,236,0.03); border-radius:10px; border:1px solid var(--subtle);">
-          <span style="font-size:16px; flex-shrink:0;">🦉</span>
-          <div style="font-size:12px; color:var(--muted); line-height:1.55;"><strong style="color:var(--white);">Athena:</strong> Expense ratio trending above target. F&I backend is down 12% vs prior month — recommend reviewing VSC penetration rates before month-end.</div>
+    <!-- III. ROSTER -->
+    <section id="roster" class="private" data-shape="2" data-x="0" data-y="0" data-scale="1.15" data-alpha="0.3" data-mx="0" data-my="0" data-mscale="1" data-malpha="0.26">
+      <div class="wrap center">
+        <div class="col">
+          <div class="eyebrow rv">III &nbsp; The roster</div>
+          <h2 class="rv d1">The roster is <em>private.</em></h2>
+          <p class="lede rv d2">Behind Nexus, a staff of agents works through the night. Each has one job, a declared boundary and a name. We introduce them in person.</p>
+          <ul class="roster rv d3">
+            <li><span class="role">Concierge</span><span class="name known">Claire</span></li>
+            <li><span class="role">Strategy</span><span class="name"><span class="redact" style="width:92px" role="img" aria-label="Name withheld"></span></span></li>
+            <li><span class="role">Reconnaissance</span><span class="name"><span class="redact" style="width:74px" role="img" aria-label="Name withheld"></span></span></li>
+            <li><span class="role">Review</span><span class="name"><span class="redact" style="width:58px" role="img" aria-label="Name withheld"></span></span></li>
+            <li><span class="role">Orchestration</span><span class="name"><span class="redact" style="width:84px" role="img" aria-label="Name withheld"></span></span></li>
+            <li><span class="role">Undisclosed</span><span class="name"><span class="redact" style="width:66px" role="img" aria-label="Name withheld"></span></span></li>
+          </ul>
+          <p class="roster-note rv d4">Claire is receiving guests now, lower right.</p>
         </div>
       </div>
-    </div>
+    </section>
 
-  </section>
-
-  <!-- TICKER -->
-  <div class="ticker-wrap">
-    <div class="ticker-track">
-      <span class="ticker-item">DealerDash KPI Dashboards</span>
-      <span class="ticker-item">IntelBot Daily Intelligence</span>
-      <span class="ticker-item">Ledger Financial Forecasting</span>
-      <span class="ticker-item">New Car Market Scouting</span>
-      <span class="ticker-item">Used Car Appraisal Automation</span>
-      <span class="ticker-item">Service Lane Intelligence</span>
-      <span class="ticker-item">Competitive Pricing Intel</span>
-      <span class="ticker-item">RO Audit & Fraud Detection</span>
-      <span class="ticker-item">Webchat Lead Capture</span>
-      <span class="ticker-item">Various Integrations Available</span>
-      <span class="ticker-item">DealerDash KPI Dashboards</span>
-      <span class="ticker-item">IntelBot Daily Intelligence</span>
-      <span class="ticker-item">Ledger Financial Forecasting</span>
-      <span class="ticker-item">New Car Market Scouting</span>
-      <span class="ticker-item">Used Car Appraisal Automation</span>
-      <span class="ticker-item">Service Lane Intelligence</span>
-      <span class="ticker-item">Competitive Pricing Intel</span>
-      <span class="ticker-item">RO Audit & Fraud Detection</span>
-      <span class="ticker-item">Webchat Lead Capture</span>
-      <span class="ticker-item">Various Integrations Available</span>
-    </div>
-  </div>
-
-
-  <!-- PRODUCT -->
-  <section id="product">
-    <div class="product-section">
-      <div class="product-text reveal">
-        <div class="section-label">DealerDash</div>
-        <h2 class="section-h2">Every KPI. Every store. One screen.</h2>
-        <p class="section-sub">Real-time performance metrics for units, gross, and backend PVR — surfaced to your managers and ownership the moment it matters.</p>
-        <br/><br/>
-        <a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener" class="btn-primary">See DealerDash Live →</a>
-      </div>
-      <div class="product-visual reveal">
-        <div class="dash-mock">
-          <div class="dash-header">
-            <div class="dash-title">Performance Overview</div>
-            <div class="dash-badge">● Live</div>
-          </div>
-          <div class="dash-kpis">
-            <div class="kpi-card">
-              <div class="kpi-label">Units Sold</div>
-              <div class="kpi-value">41</div>
-              <div class="kpi-delta">↑ +6 vs last mo</div>
+    <!-- IV. GOVERNANCE -->
+    <section id="governance" data-shape="3" data-x="0.7" data-y="-0.34" data-scale="1.05" data-alpha="0.6" data-mx="0.1" data-my="-0.72" data-mscale="0.9" data-malpha="0.34">
+      <div class="wrap">
+        <div class="col" style="max-width:640px">
+          <div class="eyebrow rv">IV &nbsp; Governance</div>
+          <h2 class="rv d1">Discretion, <em>engineered.</em></h2>
+          <p class="lede rv d2">Intelligence without restraint is a liability. Every agent in Nexus answers to the same four rules.</p>
+          <div class="tenets">
+            <div class="tenet rv d3">
+              <h3>Scoped by design</h3>
+              <p>Each agent works inside a declared boundary. Nothing touches what it does not need.</p>
             </div>
-            <div class="kpi-card">
-              <div class="kpi-label">Front Gross</div>
-              <div class="kpi-value">$2,840</div>
-              <div class="kpi-delta">↑ +$210 PVR</div>
+            <div class="tenet rv d3">
+              <h3>Every action recorded</h3>
+              <p>A complete audit trail, surfaced to your team. Never a black box.</p>
             </div>
-            <div class="kpi-card">
-              <div class="kpi-label">Backend PVR</div>
-              <div class="kpi-value">$1,620</div>
-              <div class="kpi-delta">↑ On track</div>
+            <div class="tenet rv d4">
+              <h3>Always in view</h3>
+              <p>Summaries, flags and escalations reach management as they happen.</p>
+            </div>
+            <div class="tenet rv d4">
+              <h3>Yours to leave</h3>
+              <p>No lock-in. No integration tolls. Your data stays your own.</p>
             </div>
           </div>
-          <div class="dash-bars">
-            <div class="bar" style="height:35%"></div>
-            <div class="bar" style="height:55%"></div>
-            <div class="bar" style="height:45%"></div>
-            <div class="bar gold" style="height:70%"></div>
-            <div class="bar" style="height:60%"></div>
-            <div class="bar" style="height:50%"></div>
-            <div class="bar gold" style="height:85%"></div>
-            <div class="bar" style="height:65%"></div>
-            <div class="bar" style="height:75%"></div>
-            <div class="bar gold" style="height:90%"></div>
-            <div class="bar" style="height:80%"></div>
-            <div class="bar" style="height:72%"></div>
-          </div>
-          <div class="dash-agents">
-            <div class="agent-pill"><span class="agent-dot"></span>Updated 2 min ago</div>
-            <div class="agent-pill">▲ 94% goal pace</div>
-          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- AGENTS CAROUSEL -->
-  <section id="agents" class="products-section">
-    <div class="products-header">
-      <div class="reveal">
-        <div class="section-label">Full Product Suite</div>
-        <h2 class="section-h2">Meet the team.<br/>No payroll required.</h2>
-      </div>
-      <p class="section-sub reveal">Every agent is purpose-built for one function. They run overnight, report every morning, and never ask for a raise.</p>
-    </div>
-
-    <!-- CAROUSEL WRAPPER -->
-    <div class="carousel-outer reveal">
-      <div class="carousel-track" id="agentTrack">
-
-        <!-- Claire -->
-        <div class="carousel-card has-photo">
-          <div class="carousel-photo-wrap">
-            <img src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Agentd/ClaireBubble.png" alt="Claire" />
-            <div class="carousel-photo-overlay"></div>
+    <!-- V. INVITATION -->
+    <section id="invitation" class="invite" data-shape="4" data-x="0" data-y="0" data-scale="1.12" data-alpha="0.95" data-mx="0" data-my="0" data-mscale="1.5" data-malpha="0.5">
+      <div class="wrap center">
+        <div class="col">
+          <div class="eyebrow rv">V &nbsp; Access</div>
+          <h2 class="rv d1">By <em>invitation.</em></h2>
+          <p class="lede rv d2">Nexus is offered privately, one dealer group at a time. Every engagement begins with a conversation.</p>
+          <div class="actions rv d3">
+            <a class="btn" href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener">
+              Request a private briefing
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M1 8h13M9.5 3.5 14 8l-4.5 4.5"/></svg>
+            </a>
           </div>
-          <div class="carousel-card-body">
-            <div class="carousel-name">Claire</div>
-            <div class="carousel-title">Webchat Concierge</div>
-            <div class="carousel-desc">Lazra's first point of contact. Knows every product, every tier, every agent. Answers questions, captures interest, books demos.</div>
-            <div class="carousel-status live"><span class="cs-dot"></span>Live Now</div>
-          </div>
-        </div>
-
-        <!-- Laney -->
-        <div class="carousel-card has-photo">
-          <div class="carousel-photo-wrap">
-            <img src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Agentd/LaneyService.jpeg" alt="Laney" />
-            <div class="carousel-photo-overlay"></div>
-          </div>
-          <div class="carousel-card-body">
-            <div class="carousel-name">Laney</div>
-            <div class="carousel-title">Service Advisor AI</div>
-            <div class="carousel-desc">Declined RO follow-up, recall matching, and lost service revenue recovery — running automatically every night.</div>
-            <div class="carousel-status soon"><span class="cs-dot"></span>Coming Soon</div>
-          </div>
-        </div>
-
-        <!-- Carter -->
-        <div class="carousel-card has-photo">
-          <div class="carousel-photo-wrap">
-            <img src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Agentd/Carter.jpeg" alt="Carter" />
-            <div class="carousel-photo-overlay"></div>
-          </div>
-          <div class="carousel-card-body">
-            <div class="carousel-name">Carter</div>
-            <div class="carousel-title">Used Car & Wholesale Appraiser</div>
-            <div class="carousel-desc">MMR + live market comps the moment a trade walks in the door. Wholesale pipeline intelligence built in.</div>
-            <div class="carousel-status building"><span class="cs-dot"></span>In Build</div>
-          </div>
-        </div>
-
-        <!-- Remi -->
-        <div class="carousel-card has-photo">
-          <div class="carousel-photo-wrap">
-            <img src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Agentd/Remi.jpeg" alt="Remi" />
-            <div class="carousel-photo-overlay"></div>
-          </div>
-          <div class="carousel-card-body">
-            <div class="carousel-name">Remi</div>
-            <div class="carousel-title">New Car Strategist & Lead Resurrection</div>
-            <div class="carousel-desc">Re-engages aged leads from your CRM and surfaces new car strategy based on live OEM incentives and market shifts.</div>
-            <div class="carousel-status soon"><span class="cs-dot"></span>Coming Soon</div>
-          </div>
-        </div>
-
-        <!-- Vee -->
-        <div class="carousel-card has-photo">
-          <div class="carousel-photo-wrap">
-            <img src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Agentd/Vee.jpeg" alt="Vee" />
-            <div class="carousel-photo-overlay"></div>
-          </div>
-          <div class="carousel-card-body">
-            <div class="carousel-name">Vee</div>
-            <div class="carousel-title">Title & A/R Agent</div>
-            <div class="carousel-desc">Monitors title status, flags aging receivables, and keeps your office from leaving money in the pipeline.</div>
-            <div class="carousel-status soon"><span class="cs-dot"></span>Coming Soon</div>
-          </div>
-        </div>
-
-        <!-- Chase -->
-        <div class="carousel-card has-photo">
-          <div class="carousel-photo-wrap">
-            <img src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Agentd/ChaseRecovery.jpeg" alt="Chase" />
-            <div class="carousel-photo-overlay"></div>
-          </div>
-          <div class="carousel-card-body">
-            <div class="carousel-name">Chase</div>
-            <div class="carousel-title">Parts Abandonment Recovery</div>
-            <div class="carousel-desc">Re-engages customers who inquired on parts but never bought. Wholesale and retail recovery on autopilot.</div>
-            <div class="carousel-status soon"><span class="cs-dot"></span>Coming Soon</div>
-          </div>
-        </div>
-
-        <!-- Grace -->
-        <div class="carousel-card has-photo">
-          <div class="carousel-photo-wrap">
-            <img src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Agentd/GraceReputation.jpeg" alt="Grace" />
-            <div class="carousel-photo-overlay"></div>
-          </div>
-          <div class="carousel-card-body">
-            <div class="carousel-name">Grace</div>
-            <div class="carousel-title">Reputation Management</div>
-            <div class="carousel-desc">Monitors Google and DealerRater daily. Drafts responses to reviews, tracks sentiment trends, and protects your score.</div>
-            <div class="carousel-status soon"><span class="cs-dot"></span>Coming Soon</div>
-          </div>
-        </div>
-
-      </div><!-- /track -->
-
-      <div class="carousel-controls">
-        <button class="carousel-btn" id="agentPrev" aria-label="Previous">←</button>
-        <div class="carousel-dots" id="agentDots"></div>
-        <button class="carousel-btn" id="agentNext" aria-label="Next">→</button>
-      </div>
-    </div><!-- /outer -->
-
-    <!-- PRODUCT CARDS ROW -->
-    <div class="prod-carousel-outer" style="margin-top:20px;"><div id="prodTrack" class="prod-carousel-track" style="display:grid; grid-template-columns:repeat(6,1fr); gap:14px;">
-      <div class="agent-card reveal" style="background:linear-gradient(145deg,rgba(197,162,88,0.08),var(--navy-mid)); border-color:rgba(197,162,88,0.22);">
-        <div class="agent-icon">📊</div>
-        <div class="agent-name">DealerDash</div>
-        <div class="agent-role">Real-time KPI dashboards. Every store, every manager, one screen.</div>
-        <div class="agent-status live"><span class="status-dot"></span>Live</div>
-      </div>
-      <div class="agent-card reveal" style="background:linear-gradient(145deg,rgba(197,162,88,0.08),var(--navy-mid)); border-color:rgba(197,162,88,0.22);">
-        <div class="agent-icon">📒</div>
-        <div class="agent-name">Ledger</div>
-        <div class="agent-role">Upload financials. GA-style metrics, forecasting, pro formas.</div>
-        <div class="agent-status live"><span class="status-dot"></span>Live</div>
-      </div>
-      <div class="agent-card reveal" style="background:linear-gradient(145deg,rgba(197,162,88,0.08),var(--navy-mid)); border-color:rgba(197,162,88,0.22);">
-        <div class="agent-icon">📰</div>
-        <div class="agent-name">IntelBot</div>
-        <div class="agent-role">Daily market intelligence. Your on-call automotive analyst.</div>
-        <div class="agent-status live"><span class="status-dot"></span>Live</div>
-      </div>
-      <div class="agent-card reveal">
-        <div class="agent-icon">🔭</div>
-        <div class="agent-name">Scout</div>
-        <div class="agent-role">Monitors Manheim, competitor inventory, and OEM incentives daily.</div>
-        <div class="agent-status live"><span class="status-dot"></span>Live</div>
-      </div>
-      <div class="agent-card reveal">
-        <div class="agent-icon">🦉</div>
-        <div class="agent-name">Athena</div>
-        <div class="agent-role">In-house strategist. Lives in Slack. Hallucination-checked.</div>
-        <div class="agent-status live"><span class="status-dot"></span>Live in Slack</div>
-      </div>
-      <div class="agent-card reveal">
-        <div class="agent-icon">📋</div>
-        <div class="agent-name">Gauge</div>
-        <div class="agent-role">RO &amp; warranty audit. 90-day pattern detection, flags discrepancies automatically.</div>
-        <div class="agent-status building"><span class="status-dot"></span>Coming Soon</div>
-      </div>
-    </div></div><!-- /prod-carousel-outer -->
-    <div class="prod-carousel-controls" id="prodControls" style="display:none;">
-      <button class="carousel-btn" id="prodPrev">&#8592;</button>
-      <div class="carousel-dots" id="prodDots"></div>
-      <button class="carousel-btn" id="prodNext">&#8594;</button>
-    </div>
-  </section>
-
-  <!-- HOW IT WORKS -->
-  <section id="how" class="how-section">
-    <div style="text-align:center; margin-bottom: 0;">
-      <div class="section-label" style="justify-content:center;"><span style="display:none"></span>How It Works</div>
-      <h2 class="section-h2 reveal">From signal<br/>to action.</h2>
-    </div>
-    <div class="how-grid reveal">
-      <div class="how-step">
-        <div class="how-num">01</div>
-        <div class="how-title">No integration required</div>
-        <div class="how-desc">No DMS hookup. No CRM tunnel. No $1,000/month connectivity fees. Lazra products are designed to run independently — bring your own data or let agents gather it.</div>
-      </div>
-      <div class="how-step">
-        <div class="how-num">02</div>
-        <div class="how-title">Agents go live</div>
-        <div class="how-desc">Your product stack deploys and starts running — dashboards populate, daily digests go out, financial models load. Everything surfaces where your team already works.</div>
-      </div>
-      <div class="how-step">
-        <div class="how-num">03</div>
-        <div class="how-title">Intelligence compounds</div>
-        <div class="how-desc">Alerts surface in Slack. Forecasts update in real-time. Managers get clarity without a spreadsheet. Ownership gets answers before questions get asked.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- GOVERNANCE -->
-  <section id="governance">
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start;">
-      <div class="reveal">
-        <div class="section-label">Governance Layer</div>
-        <h2 class="section-h2">Not just agents.<br/>Agents with <em style="font-style:normal;color:var(--gold);">guardrails.</em></h2>
-        <p class="section-sub" style="margin-top:16px;">Most AI vendors give you a router. We give you a governance layer — routing, memory, compliance, and management visibility baked into every agent from day one.</p>
-      </div>
-      <div class="reveal" style="display:flex; flex-direction:column; gap:16px; padding-top:8px;">
-        <div style="background:var(--navy-mid); border:1px solid var(--subtle); border-radius:12px; padding:24px 26px;">
-          <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; margin-bottom:8px; color:var(--white);">🔒 Limited Scope by Design</div>
-          <div style="font-size:14px; color:var(--muted); line-height:1.65;">Every agent operates within a tightly defined permission boundary. No agent touches what it doesn't need to. Scope is declared, not assumed.</div>
-        </div>
-        <div style="background:var(--navy-mid); border:1px solid var(--subtle); border-radius:12px; padding:24px 26px;">
-          <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; margin-bottom:8px; color:var(--white);">📋 Full Audit Logging</div>
-          <div style="font-size:14px; color:var(--muted); line-height:1.65;">Every action every agent takes is logged. Not hidden in a black box — surfaced to your team. You always know what ran, what it touched, and why.</div>
-        </div>
-        <div style="background:var(--navy-mid); border:1px solid var(--subtle); border-radius:12px; padding:24px 26px;">
-          <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; margin-bottom:8px; color:var(--white);">💬 Slack Transparency Handoffs</div>
-          <div style="font-size:14px; color:var(--muted); line-height:1.65;">Agents run overnight but management sees everything in Slack. Summaries, flags, and escalations hit your channel automatically — you're never flying blind.</div>
-        </div>
-        <div style="background:var(--navy-mid); border:1px solid rgba(197,162,88,0.25); border-radius:12px; padding:24px 26px; background:linear-gradient(145deg, rgba(197,162,88,0.06), var(--navy-mid));">
-          <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; margin-bottom:8px; color:var(--gold);">🏛️ Enterprise Trust, Dealer Price</div>
-          <div style="font-size:14px; color:var(--muted); line-height:1.65;">The compliance posture enterprises pay $50K/year for — built into every Lazra deployment, at a price that makes sense for a single rooftop.</div>
+          <p class="fine rv d4">Or write to <a href="mailto:christopher@lazralabs.ai">christopher@lazralabs.ai</a></p>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- VS competitors -->
-    <div class="reveal" style="margin-top:48px; background:var(--navy-mid); border:1px solid var(--subtle); border-radius:16px 16px 0 0; overflow:hidden;">
-      <div style="display:grid; grid-template-columns:140px 1fr 1fr; border-bottom:1px solid var(--subtle);">
-        <div style="padding:16px 20px; font-size:12px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted);"></div>
-        <div style="padding:20px 28px; font-size:12px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); border-left:1px solid var(--subtle); text-align:center;">Lazra Labs</div>
-        <div style="padding:20px 28px; font-size:12px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); border-left:1px solid var(--subtle); text-align:center;">Agent-Only Vendors</div>
-      </div>
-      <div style="display:grid; grid-template-columns:140px 1fr 1fr; border-bottom:1px solid var(--subtle);">
-        <div style="padding:16px 28px; font-size:14px; color:var(--muted);">Governance layer built-in</div>
-        <div style="padding:16px 28px; font-size:14px; color:#5ECC84; border-left:1px solid var(--subtle); text-align:center; font-weight:600;">✓ Always</div>
-        <div style="padding:16px 28px; font-size:14px; color:rgba(244,241,236,0.3); border-left:1px solid var(--subtle); text-align:center;">✗ Add-on or missing</div>
-      </div>
-      <div style="display:grid; grid-template-columns:140px 1fr 1fr; border-bottom:1px solid var(--subtle);">
-        <div style="padding:16px 28px; font-size:14px; color:var(--muted);">Audit logs &amp; transparency</div>
-        <div style="padding:16px 28px; font-size:14px; color:#5ECC84; border-left:1px solid var(--subtle); text-align:center; font-weight:600;">✓ Full logging</div>
-        <div style="padding:16px 28px; font-size:14px; color:rgba(244,241,236,0.3); border-left:1px solid var(--subtle); text-align:center;">✗ Black box</div>
-      </div>
-      <div style="display:grid; grid-template-columns:140px 1fr 1fr; border-bottom:1px solid var(--subtle);">
-        <div style="padding:16px 28px; font-size:14px; color:var(--muted);">Management Slack visibility</div>
-        <div style="padding:16px 28px; font-size:14px; color:#5ECC84; border-left:1px solid var(--subtle); text-align:center; font-weight:600;">✓ Native</div>
-        <div style="padding:16px 28px; font-size:14px; color:rgba(244,241,236,0.3); border-left:1px solid var(--subtle); text-align:center;">✗ Manual setup</div>
-      </div>
-      <div style="display:grid; grid-template-columns:140px 1fr 1fr; border-bottom:1px solid var(--subtle);">
-        <div style="padding:16px 28px; font-size:14px; color:var(--muted);">Runs overnight, safely scoped</div>
-        <div style="padding:16px 28px; font-size:14px; color:#5ECC84; border-left:1px solid var(--subtle); text-align:center; font-weight:600;">✓ Enforced</div>
-        <div style="padding:16px 28px; font-size:14px; color:rgba(244,241,236,0.3); border-left:1px solid var(--subtle); text-align:center;">✗ Developer responsibility</div>
-      </div>
-      <div style="display:grid; grid-template-columns:140px 1fr 1fr;">
-        <div style="padding:16px 28px; font-size:14px; color:var(--muted);">Vendor lock-in</div>
-        <div style="padding:16px 28px; font-size:14px; color:#5ECC84; border-left:1px solid var(--subtle); text-align:center; font-weight:600;">✓ None</div>
-        <div style="padding:16px 28px; font-size:14px; color:rgba(244,241,236,0.3); border-left:1px solid var(--subtle); text-align:center;">✗ Deep integration costs</div>
-      </div>
-    </div>
-  </section>
+  </main>
 
-  <!-- PRICING -->
-  <section id="pricing">
-    <div class="section-label">Pricing</div>
-    <h2 class="section-h2 reveal">Start this week.<br/>See ROI next month.</h2>
-    <p class="section-sub reveal">One store, one product, zero risk. Add agents as they prove value.</p>
-    <div class="pricing-grid">
-      <div class="price-card reveal">
-        <div class="price-tier">Basic</div>
-        <div class="price-amount"><sup>$</sup><span class="price-number">349</span></div>
-        <div class="price-period">per store / month</div>
-        <ul class="price-features">
-          <li>DealerDash KPI dashboard</li>
-          <li>Manager &amp; GM views</li>
-          <li>Agent access à la carte</li>
-          <li>Various integrations available on demand</li>
-        </ul>
-        <a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener" class="price-cta outline">Get Started</a>
-      </div>
-      <div class="price-card featured reveal">
-        <div class="price-tier">Inventory + Playbook</div>
-        <div class="price-amount"><sup>$</sup><span class="price-number">799</span></div>
-        <div class="price-period">per store / month</div>
-        <ul class="price-features">
-          <li>Everything in Basic</li>
-          <li>Inventory management</li>
-          <li>Playbook KPI customization</li>
-          <li>Agent access à la carte per dashboard</li>
-          <li>DMS integration costs may vary</li>
-        </ul>
-        <a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener" class="price-cta solid">Request Demo</a>
-      </div>
-      <div class="price-card reveal">
-        <div class="price-tier">BlockIQ + Ledger</div>
-        <div class="price-amount"><sup>$</sup><span class="price-number">1,499</span></div>
-        <div class="price-period">per store / month</div>
-        <ul class="price-features">
-          <li>Everything in Inventory + Playbook</li>
-          <li>BlockIQ deal intelligence</li>
-          <li>Ledger financial forecasting</li>
-          <li>Agent access à la carte per dashboard</li>
-          <li>DMS integration costs may vary</li>
-        </ul>
-        <a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener" class="price-cta outline">Request Demo</a>
-      </div>
-      <div class="price-card reveal">
-        <div class="price-tier">Multi-Rooftop</div>
-        <div class="price-amount"><span class="price-number" style="font-size:38px;letter-spacing:-0.02em;">Custom</span></div>
-        <div class="price-period">pricing upon request</div>
-        <ul class="price-features">
-          <li>All features included</li>
-          <li>Moneyball gamification dashboard</li>
-          <li>Multi-store group dashboards</li>
-          <li>Custom agent builds</li>
-          <li>Dedicated onboarding</li>
-        </ul>
-        <a href="mailto:christopher@lazralabs.ai" class="price-cta outline">Contact Sales</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA BANNER -->
-  <div class="cta-banner" id="contact">
-    <div class="cta-text">
-      <h2>Turn opportunity<br/>into action.</h2>
-      <p>30-minute demo. We'll show you exactly what Lazra is already doing at a live store.</p>
-    </div>
-    <div class="cta-actions">
-      <a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener" class="btn-primary">Book a Demo</a>
-      <span class="cta-note">No pitch decks. Just a live system.</span>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
   <footer>
-    <div>
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:20px;">
-        <img src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Assets/Logo/TRANPARENT.png" alt="Lazra Labs" style="height:26px; opacity:0.85;" />
-        <div style="display:flex; gap:28px; flex-wrap:wrap; align-items:center; list-style:none;">
-          <a href="#products" style="font-size:13px; color:var(--muted); text-decoration:none; transition:color 0.2s;">Products</a>
-          <a href="#pricing" style="font-size:13px; color:var(--muted); text-decoration:none; transition:color 0.2s;">Pricing</a>
-          <a href="#governance" style="font-size:13px; color:var(--muted); text-decoration:none; transition:color 0.2s;">Governance</a>
-          <a href="https://calendly.com/lazralabs/30min" target="_blank" rel="noopener" style="font-size:13px; color:var(--muted); text-decoration:none; transition:color 0.2s;">Book a Demo</a>
-          <a href="mailto:christopher@lazralabs.ai" style="font-size:13px; color:var(--muted); text-decoration:none; transition:color 0.2s;">Contact</a>
-        </div>
+    <div class="foot">
+      <div class="foot-brand">
+        <img src="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Assets/Logo/TRANPARENT.png" alt="Lazra Labs" loading="lazy" width="30" height="30" />
+        <span>© 2026 Lazra Labs LLC. All rights reserved.</span>
       </div>
-      <div style="border-top:1px solid var(--subtle); padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-        <div style="font-size:12px; color:rgba(244,241,236,0.25);">© 2026 Lazra Labs LLC. All rights reserved.</div>
-        <div style="display:flex; gap:20px; align-items:center;">
-          <a href="/privacy-policy.html" style="font-size:12px; color:rgba(244,241,236,0.35); text-decoration:none; transition:color 0.2s;">Privacy Policy</a>
-          <a href="/terms.html" style="font-size:12px; color:rgba(244,241,236,0.35); text-decoration:none; transition:color 0.2s;">Terms &amp; Conditions</a>
-        </div>
+      <div class="foot-links">
+        <a href="/privacy-policy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="mailto:christopher@lazralabs.ai">Contact</a>
       </div>
     </div>
   </footer>
 
   <script>
-    // Scroll reveal
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  (function () {
+    'use strict';
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    reveals.forEach(el => observer.observe(el));
+    /* ── Nav state ── */
+    var nav = document.getElementById('nav');
+    function navState() { nav.classList.toggle('scrolled', window.scrollY > 24); }
+    window.addEventListener('scroll', navState, { passive: true });
+    navState();
 
-    // Stagger agent cards
-    document.querySelectorAll('.agent-card.reveal').forEach((card, i) => {
-      card.style.transitionDelay = `${i * 0.06}s`;
+    /* ── Reveal on scroll ── */
+    var rvs = document.querySelectorAll('.rv');
+    if ('IntersectionObserver' in window && !reduce) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+      rvs.forEach(function (el) { io.observe(el); });
+    } else {
+      rvs.forEach(function (el) { el.classList.add('in'); });
+    }
+
+    /* ── Stage: GPU particle field that re-forms per section ── */
+    var canvas = document.getElementById('stage');
+    var gl = null;
+    try {
+      gl = canvas.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' });
+    } catch (e) { gl = null; }
+    if (!gl) { document.documentElement.classList.add('no-gl'); return; }
+
+    var VS = [
+      'precision highp float;',
+      'attribute vec4 aSeed;',
+      'uniform float uTime, uA, uB, uT, uScale, uAspect, uPoint, uFit;',
+      'uniform vec2 uOffset, uMouse;',
+      'varying float vTone;',
+      'varying float vFade;',
+      'const float TAU = 6.28318530718;',
+      'float wob(vec3 p, float t) {',
+      '  return sin(p.x * 2.3 + t) * sin(p.y * 2.9 - t * 0.8) * sin(p.z * 2.6 + t * 0.6)',
+      '       + 0.5 * sin(p.x * 5.1 - t * 1.3) * sin(p.y * 4.7 + t) * sin(p.z * 5.6 - t * 0.7);',
+      '}',
+      'vec3 onSphere(vec2 s) {',
+      '  float th = s.x * TAU;',
+      '  float z = s.y * 2.0 - 1.0;',
+      '  float r = sqrt(max(0.0, 1.0 - z * z));',
+      '  return vec3(r * cos(th), z, r * sin(th));',
+      '}',
+      'vec3 shape(float id, vec4 s, float t) {',
+      '  if (id < 0.5) {',                                   /* 0: the core, a breathing mind */
+      '    vec3 d = onSphere(s.xy);',
+      '    float shell = s.z < 0.22 ? 0.52 : (s.z < 0.3 ? 0.78 : 1.0);',
+      '    float r = shell * (1.0 + 0.17 * wob(d * 1.25, t * 0.32));',
+      '    return d * r;',
+      '  }',
+      '  if (id < 1.5) {',                                   /* 1: four instruments in orbit */
+      '    float k = floor(s.z * 4.0);',
+      '    float a = k * TAU * 0.25 + t * 0.1;',
+      '    vec3 c = vec3(cos(a) * 0.92, sin(k * 1.7 + t * 0.25) * 0.14, sin(a) * 0.92);',
+      '    vec3 d = onSphere(s.xy);',
+      '    float halo = step(0.86, s.w);',
+      '    float r = mix(0.3 * (1.0 + 0.1 * wob(d * 2.0 + k, t * 0.4)), 0.42 + 0.06 * s.x, halo);',
+      '    d.y *= mix(1.0, 0.04, halo);',
+      '    return c + d * r;',
+      '  }',
+      '  if (id < 2.5) {',                                   /* 2: a dispersed constellation */
+      '    vec3 p = (s.xyz * 2.0 - 1.0) * vec3(2.7, 1.55, 2.1);',
+      '    p.y += 0.07 * sin(t * 0.3 + s.w * TAU);',
+      '    p.x += 0.07 * cos(t * 0.24 + s.z * TAU);',
+      '    return p;',
+      '  }',
+      '  if (id < 3.5) {',                                   /* 3: an ordered lattice */
+      '    float n = 46.0;',
+      '    float gx = (floor(s.x * n) + 0.5) / n - 0.5;',
+      '    float gz = (floor(s.y * n) + 0.5) / n - 0.5;',
+      '    float line = s.z < 0.5 ? 1.0 : 0.0;',
+      '    gx = mix(gx, s.x - 0.5, line * step(0.5, s.w));',
+      '    gz = mix(gz, s.y - 0.5, line * (1.0 - step(0.5, s.w)));',
+      '    float h = 0.11 * sin(gx * 9.0 + t * 0.5) * cos(gz * 9.0 - t * 0.38);',
+      '    vec3 p = vec3(gx * 3.6, h, gz * 3.6);',
+      '    float c = cos(-0.52), sn = sin(-0.52);',
+      '    return vec3(p.x, p.y * c - p.z * sn, p.y * sn + p.z * c);',
+      '  }',
+      '  float a = s.x * TAU;',                              /* 4: a single halo */
+      '  float band = s.z < 0.7 ? 0.012 + 0.03 * s.y : 0.16 * s.y * s.y;',
+      '  float rr = 1.16 + band * cos(s.w * TAU);',
+      '  vec3 p = vec3(cos(a) * rr, sin(a) * rr, band * sin(s.w * TAU) * 1.6);',
+      '  p.z += 0.03 * sin(a * 3.0 + t * 0.4);',
+      '  return p;',
+      '}',
+      'vec3 rotY(vec3 p, float a) { float c = cos(a), s = sin(a); return vec3(p.x * c + p.z * s, p.y, -p.x * s + p.z * c); }',
+      'vec3 rotX(vec3 p, float a) { float c = cos(a), s = sin(a); return vec3(p.x, p.y * c - p.z * s, p.y * s + p.z * c); }',
+      'float spinOf(float id) { return id < 0.5 ? 1.0 : (id < 1.5 ? 0.35 : (id < 2.5 ? 0.5 : (id < 3.5 ? 0.12 : 0.0))); }',
+      'void main() {',
+      '  float tt = clamp(uT * 1.55 - aSeed.w * 0.55, 0.0, 1.0);',
+      '  tt = tt * tt * (3.0 - 2.0 * tt);',
+      '  vec3 pa = shape(uA, aSeed, uTime);',
+      '  vec3 pb = shape(uB, aSeed, uTime);',
+      '  float spin = mix(spinOf(uA), spinOf(uB), uT);',
+      '  vec3 p = mix(pa, pb, tt);',
+      '  p += (1.0 - abs(tt * 2.0 - 1.0)) * 0.22 * (aSeed.xyz - 0.5);',  /* scatter mid-morph */
+      '  p = rotY(p, uTime * 0.085 * spin + uMouse.x * 0.35);',
+      '  p = rotX(p, uMouse.y * 0.22 + 0.12 * spin);',
+      '  p *= uScale * uFit;',
+      '  float cam = 3.7;',
+      '  float w = cam - p.z;',
+      '  vec2 q = p.xy * (2.05 / w);',
+      '  q.x /= uAspect;',
+      '  q += uOffset;',
+      '  gl_Position = vec4(q, 0.0, 1.0);',
+      '  float tw = 0.75 + 0.25 * sin(uTime * (0.6 + aSeed.z * 1.6) + aSeed.w * TAU);',
+      '  gl_PointSize = uPoint * (0.55 + 1.5 * aSeed.w * aSeed.w) * (3.7 / w) * tw;',
+      '  vTone = aSeed.z;',
+      '  vFade = clamp((cam + 1.6 - w) / 3.2, 0.12, 1.0) * tw;',
+      '}'
+    ].join('\n');
+
+    var FS = [
+      'precision mediump float;',
+      'uniform float uAlpha;',
+      'varying float vTone;',
+      'varying float vFade;',
+      'void main() {',
+      '  float d = length(gl_PointCoord - 0.5);',
+      '  float a = smoothstep(0.5, 0.0, d);',
+      '  a *= a;',
+      '  vec3 deep = vec3(0.773, 0.635, 0.345);',
+      '  vec3 pale = vec3(0.960, 0.880, 0.690);',
+      '  vec3 ember = vec3(0.560, 0.370, 0.160);',
+      '  vec3 col = mix(ember, deep, smoothstep(0.0, 0.45, vTone));',
+      '  col = mix(col, pale, smoothstep(0.72, 1.0, vTone));',
+      '  gl_FragColor = vec4(col * a * vFade * uAlpha, 1.0);',
+      '}'
+    ].join('\n');
+
+    function compile(type, src) {
+      var s = gl.createShader(type);
+      gl.shaderSource(s, src); gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { throw new Error(gl.getShaderInfoLog(s) || 'shader'); }
+      return s;
+    }
+    var prog;
+    try {
+      prog = gl.createProgram();
+      gl.attachShader(prog, compile(gl.VERTEX_SHADER, VS));
+      gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FS));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { throw new Error(gl.getProgramInfoLog(prog) || 'link'); }
+    } catch (err) {
+      if (window.console) { console.warn('Stage disabled:', err.message); }
+      document.documentElement.classList.add('no-gl');
+      return;
+    }
+    gl.useProgram(prog);
+
+    var small = Math.min(window.innerWidth, window.innerHeight) < 700;
+    var COUNT = small ? 26000 : 72000;
+    var seeds = new Float32Array(COUNT * 4);
+    for (var i = 0; i < seeds.length; i++) { seeds[i] = Math.random(); }
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, seeds, gl.STATIC_DRAW);
+    var aSeed = gl.getAttribLocation(prog, 'aSeed');
+    gl.enableVertexAttribArray(aSeed);
+    gl.vertexAttribPointer(aSeed, 4, gl.FLOAT, false, 0, 0);
+
+    var U = {};
+    ['uTime', 'uA', 'uB', 'uT', 'uScale', 'uAspect', 'uPoint', 'uFit', 'uOffset', 'uMouse', 'uAlpha'].forEach(function (n) {
+      U[n] = gl.getUniformLocation(prog, n);
     });
 
-    // Stagger price cards
-    document.querySelectorAll('.price-card.reveal').forEach((card, i) => {
-      card.style.transitionDelay = `${i * 0.1}s`;
+    gl.disable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);
+    gl.clearColor(7 / 255, 7 / 255, 8 / 255, 1);
+
+    var W = 0, H = 0, dpr = 1, aspect = 1, narrow = false;
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2);
+      W = Math.max(1, Math.floor(canvas.clientWidth * dpr));
+      H = Math.max(1, Math.floor(canvas.clientHeight * dpr));
+      if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+      gl.viewport(0, 0, W, H);
+      aspect = W / H;
+      narrow = window.innerWidth <= 900;
+      measure();
+    }
+
+    /* Keyframes come from the sections' data attributes */
+    var sections = Array.prototype.slice.call(document.querySelectorAll('main > section'));
+    var keys = [];
+    function num(el, name, fallback) {
+      var v = parseFloat(el.getAttribute('data-' + name));
+      return isNaN(v) ? fallback : v;
+    }
+    function measure() {
+      var sy = window.scrollY;
+      keys = sections.map(function (el) {
+        var r = el.getBoundingClientRect();
+        return {
+          mid: r.top + sy + r.height / 2,
+          shape: num(el, 'shape', 0),
+          x: narrow ? num(el, 'mx', 0) : num(el, 'x', 0),
+          y: narrow ? num(el, 'my', 0) : num(el, 'y', 0),
+          scale: narrow ? num(el, 'mscale', 0.8) : num(el, 'scale', 1),
+          alpha: narrow ? num(el, 'malpha', 0.5) : num(el, 'alpha', 1)
+        };
+      });
+    }
+
+    function targetProgress() {
+      var c = window.scrollY + window.innerHeight / 2;
+      var n = keys.length;
+      if (!n) { return 0; }
+      if (c <= keys[0].mid) { return 0; }
+      if (c >= keys[n - 1].mid) { return n - 1; }
+      for (var k = 0; k < n - 1; k++) {
+        if (c < keys[k + 1].mid) {
+          var t = (c - keys[k].mid) / (keys[k + 1].mid - keys[k].mid);
+          t = Math.min(1, Math.max(0, (t - 0.2) / 0.6));   /* dwell at each section */
+          return k + t;
+        }
+      }
+      return n - 1;
+    }
+
+    var prog01 = 0, mx = 0, my = 0, tmx = 0, tmy = 0;
+    var start = performance.now(), last = start, running = true, raf = 0;
+
+    window.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') { return; }
+      tmx = (e.clientX / window.innerWidth) * 2 - 1;
+      tmy = (e.clientY / window.innerHeight) * 2 - 1;
+    }, { passive: true });
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function frame(now) {
+      raf = 0;
+      var dt = Math.min(0.05, (now - last) / 1000); last = now;
+      var ease = reduce ? 1 : 1 - Math.pow(0.0018, dt);
+      prog01 = lerp(prog01, targetProgress(), ease);
+      mx = lerp(mx, tmx, ease * 0.6); my = lerp(my, tmy, ease * 0.6);
+
+      var n = keys.length;
+      var i0 = Math.min(n - 1, Math.max(0, Math.floor(prog01)));
+      var i1 = Math.min(n - 1, i0 + 1);
+      var t = prog01 - i0;
+      var s = t * t * (3 - 2 * t);
+      var a = keys[i0], b = keys[i1];
+
+      var fit = Math.min(1, aspect * 1.25);
+      var px = Math.max(1.6, H / 400) * (small ? 1.15 : 1);
+
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.uniform1f(U.uTime, reduce ? 12.0 : (now - start) / 1000);
+      gl.uniform1f(U.uA, a.shape);
+      gl.uniform1f(U.uB, b.shape);
+      gl.uniform1f(U.uT, a.shape === b.shape ? 0 : t);
+      gl.uniform1f(U.uScale, lerp(a.scale, b.scale, s));
+      gl.uniform1f(U.uAspect, aspect);
+      gl.uniform1f(U.uPoint, px);
+      gl.uniform1f(U.uFit, fit);
+      gl.uniform2f(U.uOffset, lerp(a.x, b.x, s), lerp(a.y, b.y, s));
+      gl.uniform2f(U.uMouse, mx, my);
+      gl.uniform1f(U.uAlpha, 0.62 * lerp(a.alpha, b.alpha, s) * (small ? 1.5 : 1));
+      gl.drawArrays(gl.POINTS, 0, COUNT);
+
+      if (running && !reduce) { raf = requestAnimationFrame(frame); }
+    }
+    function kick() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+
+    window.addEventListener('resize', function () { resize(); kick(); });
+    window.addEventListener('load', function () { measure(); kick(); });
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(function () { measure(); kick(); }); }
+    if (reduce) { window.addEventListener('scroll', kick, { passive: true }); }
+    document.addEventListener('visibilitychange', function () {
+      running = !document.hidden;
+      if (running) { kick(); }
     });
-  </script>
-  <script>
-    // Agent Carousel
-    (function() {
-      var track = document.getElementById('agentTrack');
-      var prevBtn = document.getElementById('agentPrev');
-      var nextBtn = document.getElementById('agentNext');
-      var dotsEl = document.getElementById('agentDots');
-      if (!track) return;
+    canvas.addEventListener('webglcontextlost', function (e) {
+      e.preventDefault(); running = false;
+      document.documentElement.classList.add('no-gl');
+    });
 
-      var cards = track.querySelectorAll('.carousel-card');
-      var total = cards.length;
-      var current = 0;
-
-      function getVisible() {
-        if (window.innerWidth <= 600) return 1;
-        if (window.innerWidth <= 960) return 2;
-        return 3;
-      }
-
-      function maxIndex() { return Math.max(0, total - getVisible()); }
-
-      function buildDots() {
-        dotsEl.innerHTML = '';
-        for (var i = 0; i <= maxIndex(); i++) {
-          (function(idx) {
-            var d = document.createElement('button');
-            d.className = 'carousel-dot' + (idx === current ? ' active' : '');
-            d.addEventListener('click', function() { goTo(idx); });
-            dotsEl.appendChild(d);
-          })(i);
-        }
-      }
-
-      function goTo(idx) {
-        current = Math.max(0, Math.min(idx, maxIndex()));
-        var cardWidth = cards[0].getBoundingClientRect().width;
-        var gap = 16;
-        track.style.transform = 'translateX(-' + (current * (cardWidth + gap)) + 'px)';
-        prevBtn.disabled = current === 0;
-        nextBtn.disabled = current >= maxIndex();
-        var dots = dotsEl.querySelectorAll('.carousel-dot');
-        for (var i = 0; i < dots.length; i++) {
-          dots[i].classList.toggle('active', i === current);
-        }
-      }
-
-      prevBtn.addEventListener('click', function() { goTo(current - 1); });
-      nextBtn.addEventListener('click', function() { goTo(current + 1); });
-
-      buildDots();
-      // Run after paint so card widths are correct
-      if (document.readyState === 'complete') {
-        goTo(0);
-      } else {
-        window.addEventListener('load', function() { buildDots(); goTo(0); });
-      }
-
-      window.addEventListener('resize', function() { buildDots(); goTo(Math.min(current, maxIndex())); });
-
-      var startX = 0;
-      track.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; }, { passive: true });
-      track.addEventListener('touchend', function(e) {
-        var diff = startX - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 50) goTo(diff > 0 ? current + 1 : current - 1);
-      });
-    })();
-  </script>
-  <script>
-    // ── Hamburger (single handler — duplicate listeners were opening then closing on every tap) ──
-    (function() {
-      var btn = document.getElementById('hamburgerBtn');
-      var menu = document.getElementById('mobileMenu');
-      var closeBtn = document.getElementById('mobileClose');
-      if (!btn || !menu) return;
-
-      function openMenu() {
-        menu.classList.add('open');
-        btn.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-        document.body.style.overflow = 'hidden';
-      }
-      function closeMenu() {
-        menu.classList.remove('open');
-        btn.classList.remove('open');
-        btn.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-      }
-
-      btn.addEventListener('click', function() {
-        menu.classList.contains('open') ? closeMenu() : openMenu();
-      });
-      if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-
-      var links = menu.querySelectorAll('.mnav-link');
-      for (var i = 0; i < links.length; i++) {
-        links[i].addEventListener('click', closeMenu);
-      }
-
-      // Close on backdrop tap
-      menu.addEventListener('click', function(e) {
-        if (e.target === menu) closeMenu();
-      });
-    })();
-
-    // ── Product Cards Carousel (mobile) ──
-    (function() {
-      var track = document.getElementById('prodTrack');
-      var prevBtn = document.getElementById('prodPrev');
-      var nextBtn = document.getElementById('prodNext');
-      var dotsEl = document.getElementById('prodDots');
-      var controls = document.getElementById('prodControls');
-      if (!track) return;
-
-      var cards = track.querySelectorAll('.agent-card');
-      var current = 0;
-
-      function getVisible() {
-        if (window.innerWidth <= 400) return 1;
-        if (window.innerWidth <= 600) return 2;
-        if (window.innerWidth <= 960) return 3;
-        return 6;
-      }
-
-      function maxIdx() { return Math.max(0, cards.length - getVisible()); }
-
-      function buildDots() {
-        if (!dotsEl) return;
-        dotsEl.innerHTML = '';
-        var pages = maxIdx() + 1;
-        for (var i = 0; i <= maxIdx(); i++) {
-          (function(idx) {
-            var d = document.createElement('button');
-            d.className = 'carousel-dot' + (idx === current ? ' active' : '');
-            d.addEventListener('click', function() { goTo(idx); });
-            dotsEl.appendChild(d);
-          })(i);
-        }
-      }
-
-      function goTo(idx) {
-        current = Math.max(0, Math.min(idx, maxIdx()));
-        var cardW = cards[0].getBoundingClientRect().width;
-        track.style.transform = 'translateX(-' + (current * (cardW + 14)) + 'px)';
-        if (prevBtn) prevBtn.disabled = current === 0;
-        if (nextBtn) nextBtn.disabled = current >= maxIdx();
-        var dots = dotsEl ? dotsEl.querySelectorAll('.carousel-dot') : [];
-        for (var i = 0; i < dots.length; i++) dots[i].classList.toggle('active', i === current);
-      }
-
-      if (prevBtn) prevBtn.addEventListener('click', function() { goTo(current - 1); });
-      if (nextBtn) nextBtn.addEventListener('click', function() { goTo(current + 1); });
-
-      function init() {
-        buildDots();
-        goTo(0);
-      }
-      init();
-      window.addEventListener('resize', function() { buildDots(); goTo(Math.min(current, maxIdx())); });
-
-      var sx = 0;
-      track.addEventListener('touchstart', function(e) { sx = e.touches[0].clientX; }, { passive: true });
-      track.addEventListener('touchend', function(e) {
-        var diff = sx - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
-      });
-    })();
+    resize();
+    canvas.classList.add('on');
+    kick();
+  })();
   </script>
 
+  <!-- Claire, the concierge -->
   <script
     src="https://lazralabswebsitewidget.pages.dev/widget.js"
     data-api-url="https://www.lazralabs.ai/chat"
     data-dealer="LAZRALABS"
-    data-brand-color="#a855f7"
+    data-brand-color="#C5A258"
     data-position="bottom-right"
     data-title="Claire, your concierge"
-    data-subtitle="Ask me anything about DealerDash, Ledger, or how Lazra works."
+    data-subtitle="Ask me about Lazra Nexus."
     data-avatar-url="https://pub-b1e351dce9f44feda8d3050c7fa4ee91.r2.dev/Website%20Assets/Agentd/ClaireBubble.png"
   ></script>
 </body>
